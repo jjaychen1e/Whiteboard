@@ -3,9 +3,11 @@ import PerfectHTTP
 import PerfectHTTPServer
 
 #if os(Linux)
+let PORT = 80
 let HOST_NAME = "application.jjaychen.me"
 #else
-let HOST_NAME = "localhost:8181"
+let PORT = 8181
+let HOST_NAME = "localhost:\(PORT)"
 #endif
 
 // Register your own routes and handlers
@@ -152,7 +154,7 @@ do {
     
     // Launch the HTTP server.
     try HTTPServer.launch(
-        .server(name: "\(HOST_NAME)/ecnu-service", port: 8181, routes: routes))
+        .server(name: "\(HOST_NAME)/ecnu-service", port: PORT, routes: routes))
 } catch {
     fatalError("\(error)") // fatal error launching one of the servers
 }
