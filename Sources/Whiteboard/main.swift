@@ -3,7 +3,7 @@ import PerfectHTTP
 import PerfectHTTPServer
 
 #if os(Linux)
-    let PORT: UInt16 = 443
+    let PORT = 443
     let HOST_NAME = "application.jjaychen.me"
 #else
     let PORT = 8181
