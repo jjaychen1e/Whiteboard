@@ -7,15 +7,20 @@
 
 import Foundation
 
+let CERT_PATH = "/etc/letsencrypt/live/application.jjaychen.me/fullchain.pem"
+let KEY_PATH = "/etc/letsencrypt/live/application.jjaychen.me/privkey.pem"
+
 let PYTHON3_PATH = "/usr/bin/python3"
-//let PYTHON3_PATH = "/usr/local/bin/python3"
 let TESSERACT_PATH = "/usr/bin/tesseract"
-//let TESSERACT_PATH = "/usr/local/bin/tesseract"
 let TEMP_PREXFIX = "\(FileManager.default.currentDirectoryPath)/tmp"
-//let RECOGNIZE_PATH = TEMP_PREXFIX + "/recognize.py"
 
 #if os(Linux)
 let GETRSA_PATH = TEMP_PREXFIX + "/getRSA.py"
+let processLogFilePath = "/var/log/ecnu-service-process.log"
+let resultLogFilePath = "/var/log/ecnu-service-result.log"
+#else
+let processLogFilePath = TEMP_PREXFIX + "/ecnu-service-process.log"
+let resultLogFilePath = TEMP_PREXFIX + "/ecnu-service-result.log"
 #endif
 
 /// Random file name with time and random Int value.

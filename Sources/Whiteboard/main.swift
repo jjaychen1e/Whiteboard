@@ -3,11 +3,11 @@ import PerfectHTTP
 import PerfectHTTPServer
 
 #if os(Linux)
-let PORT = 80
-let HOST_NAME = "application.jjaychen.me"
+    let PORT = 443
+    let HOST_NAME = "application.jjaychen.me"
 #else
-let PORT = 8181
-let HOST_NAME = "localhost:\(PORT)"
+    let PORT = 8181
+    let HOST_NAME = "localhost:\(PORT)"
 #endif
 
 // Register your own routes and handlers
@@ -152,9 +152,21 @@ do {
     
     generateHelperPy()
     
-    // Launch the HTTP server.
-    try HTTPServer.launch(
-        .server(name: "\(HOST_NAME)/ecnu-service", port: PORT, routes: routes))
+    #if os(Linux)
+        // 启动HTTPS服务器
+        let server = HTTPServer()
+        server.serverPort = 443
+        server.serverName = "\(HOST_NAME)/ecnu-service"
+        server.addRoutes(routes)
+        server.ssl = (CERT_PATH, KEY_PATH)
+        server.certVerifyMode = .sslVerifyPeer
+        
+        try server.start()
+    #else
+        // Launch the HTTP server.
+        try HTTPServer.launch(
+            .server(name: "\(HOST_NAME)/ecnu-service", port: PORT, routes: routes))
+    #endif
 } catch {
     fatalError("\(error)") // fatal error launching one of the servers
 }

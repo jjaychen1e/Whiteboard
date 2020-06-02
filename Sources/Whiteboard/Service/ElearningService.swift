@@ -10,21 +10,6 @@ import FoundationNetworking
 import Foundation
 
 class ElearningService: ECNUService {
-// 发现直接用大夏学堂登录可以同时登录数据库！
-//    internal override func login() -> LoginStatus {
-//        let loginResult = super.login()
-//
-//        let semaphore = DispatchSemaphore(value: 0)
-//        let request = URLRequest(url: URL(string: ELEARNING_PORTAL_URL)!)
-//        urlSession.dataTask(with: request) {
-//            _, _, _ in
-//            do { semaphore.signal() }
-//        }.resume()
-//
-//        semaphore.wait()
-//        return loginResult
-//    }
-    
     func getDeadlineList(startTimestamp: String, endTimestamp: String) -> ResultEntity {
         guard loginResult == .成功 else {
             switch loginResult {
@@ -125,37 +110,6 @@ extension ElearningService {
 // MARK: Get Calander Feed
 
 extension ElearningService {
-//    private func getOriginalCalendarFeedContent() -> String? {
-//        var result: String?
-//
-//        let semaphore = DispatchSemaphore(value: 0)
-//        var request = URLRequest(url: URL(string: ELEARNING_DEADLINE_CALENDAR_FEED_URL)!)
-//        urlSession.dataTask(with: request) {
-//            data, _, _ in
-//            defer { semaphore.signal() }
-//            if let data = data {
-//                result = String(data: data, encoding: .utf8)
-//            }
-//        }.resume()
-//
-//        semaphore.wait()
-//
-//        if let calendarURL = result {
-//            request = URLRequest(url: URL(string: calendarURL)!)
-//            let _urlSession = URLSession(configuration: .default)
-//            _urlSession.dataTask(with: request) {
-//                data, _, _ in
-//                defer { semaphore.signal() }
-//                if let data = data {
-//                    result = String(data: data, encoding: .utf8)
-//                }
-//            }.resume()
-//
-//            semaphore.wait()
-//        }
-//
-//        return result
-//    }
     func getDeadlineICSCalendar(deadlines: [Deadline]) -> ICSCalendar {
         let calendar = ICSCalendar(name: "大夏学堂 Deadline 订阅")
         for deadline in deadlines {
