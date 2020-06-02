@@ -3,7 +3,7 @@ import PerfectHTTP
 import PerfectHTTPServer
 
 #if os(Linux)
-    let PORT = 443
+    let PORT: UInt16 = 443
     let HOST_NAME = "application.jjaychen.me"
 #else
     let PORT = 8181
@@ -153,13 +153,15 @@ do {
     generateHelperPy()
     
     #if os(Linux)
-        // Launch the HTTPS server.
-        try HTTPServer.launch(
-            [.secureServer(TLSConfiguration(certPath: CERT_PATH, keyPath: KEY_PATH),
-                           name: HOST_NAME,
-                           port: PORT,
-                           routes: routes)])
+        // 启动HTTPS服务器
+        let server = HTTPServer()
+        server.serverPort = PORT
+        server.serverName = "\(HOST_NAME)/ecnu-service"
+        server.addRoutes(routes)
+        server.ssl = (CERT_PATH, KEY_PATH)
+//        server.certVerifyMode = .sslVerifyPeer
         
+        try server.start()
     #else
         // Launch the HTTP server.
         try HTTPServer.launch(
