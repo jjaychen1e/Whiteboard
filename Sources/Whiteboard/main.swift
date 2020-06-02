@@ -155,7 +155,7 @@ do {
     #if os(Linux)
         // 启动HTTPS服务器
         let server = HTTPServer()
-        server.serverPort = 443
+        server.serverPort = PORT
         server.serverName = "\(HOST_NAME)/ecnu-service"
         server.addRoutes(routes)
         server.ssl = (CERT_PATH, KEY_PATH)
