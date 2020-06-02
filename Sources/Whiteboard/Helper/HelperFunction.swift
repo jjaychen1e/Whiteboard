@@ -31,7 +31,7 @@ func generateHelperPy() {
     
     #if os(Linux)
     
-    content = """
+    var content = """
     import execjs
     import sys
     input = sys.argv[1]
