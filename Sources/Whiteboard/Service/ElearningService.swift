@@ -1,0 +1,176 @@
+//
+//  ElearningService.swift
+//  Whiteboard
+//
+//  Created by JJAYCHEN on 2020/5/30.
+//
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+import Foundation
+
+class ElearningService: ECNUService {
+// 发现直接用大夏学堂登录可以同时登录数据库！
+//    internal override func login() -> LoginStatus {
+//        let loginResult = super.login()
+//
+//        let semaphore = DispatchSemaphore(value: 0)
+//        let request = URLRequest(url: URL(string: ELEARNING_PORTAL_URL)!)
+//        urlSession.dataTask(with: request) {
+//            _, _, _ in
+//            do { semaphore.signal() }
+//        }.resume()
+//
+//        semaphore.wait()
+//        return loginResult
+//    }
+    
+    func getDeadlineList(startTimestamp: String, endTimestamp: String) -> ResultEntity {
+        guard loginResult == .成功 else {
+            switch loginResult {
+            case .用户名密码错误:
+                return ResultEntity.fail(code: .用户名密码错误)
+            default:
+                return ResultEntity.fail(code: .未知原因登陆失败)
+            }
+        }
+        let deadlines = getDeadlines(startTimestamp: startTimestamp, endTimestamp: endTimestamp)
+        if deadlines.count > 0 {
+            return ResultEntity.success(data: deadlines)
+        } else {
+            return ResultEntity.fail(code: .期限任务列表为空)
+        }
+    }
+    
+    /// Generate corresponding deadline calendarID if success, otherwise return nil
+    func generateDeadlineCalendarID() -> (isSuccess: Bool, code: ResultCode, calendarID: String?) {
+        guard loginResult == .成功, isUserInfoSaveSuccess == true else {
+            return (false, loginResult == .成功 ? .数据库保存失败 : loginResult.toResultCode(), nil)
+        }
+        
+        return (true, .成功, username.encodeToCalendarID())
+    }
+    
+    func getDeadlineCalendar() -> ResultEntity {
+        guard loginResult == .成功 else {
+            switch loginResult {
+            case .用户名密码错误:
+                return ResultEntity.fail(code: .用户名密码错误)
+            default:
+                return ResultEntity.fail(code: .未知原因登陆失败)
+            }
+        }
+        
+        let calendar = Calendar.current
+        var beginDateComponents = calendar.dateComponents([.year], from: Date())
+        var endDateComponents = beginDateComponents
+        beginDateComponents.year! -= 4
+        endDateComponents.year! += 4
+        let beginTimestamp = String(Int(calendar.date(from: beginDateComponents)!.timeIntervalSince1970)) + "000"
+        let endTimestamp = String(Int(calendar.date(from: endDateComponents)!.timeIntervalSince1970)) + "000"
+        let deadlines = getDeadlines(startTimestamp: beginTimestamp, endTimestamp: endTimestamp)
+        guard deadlines.count > 0 else {
+            return ResultEntity.fail(code: .期限任务列表为空)
+        }
+        
+        let calendarName = "大夏学堂 Deadline 订阅"
+        let icsCalendar = getDeadlineICSCalendar(deadlines: deadlines)
+        
+        return ResultEntity.success(data: [
+            "fileName": calendarName + ".ics",
+            "content": icsCalendar.toICSDescription()
+        ])
+    }
+}
+
+// MARK: Get Deadline List
+
+extension ElearningService {
+    private func getDeadlines(startTimestamp: String, endTimestamp: String) -> [Deadline] {
+        var deadlines: [Deadline] = []
+        
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        let queryURL = "\(ELEARNING_DEADLINE_URL)?start=\(startTimestamp)&end=\(endTimestamp)"
+        let request = URLRequest(url: URL(string: queryURL)!)
+        urlSession.dataTask(with: request) {
+            data, _, _ in
+            defer { semaphore.signal() }
+            
+            if let data = data {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+                
+                let result = (try? JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]] ?? [])!
+                for deadline in result {
+                    let deadlineItem = Deadline(id: deadline["id"] as! String,
+                                                title: deadline["title"] as! String,
+                                                eventType: deadline["eventType"] as! String,
+                                                calendarName: deadline["calendarName"] as! String,
+                                                calendarID: deadline["calendarId"] as! String,
+                                                startDateTime: dateFormatter.date(from: deadline["start"] as! String)!,
+                                                endDateTime: dateFormatter.date(from: deadline["end"] as! String)!)
+                    
+                    deadlines.append(deadlineItem)
+                }
+            }
+        }.resume()
+        
+        semaphore.wait()
+        
+        return deadlines
+    }
+}
+
+// MARK: Get Calander Feed
+
+extension ElearningService {
+//    private func getOriginalCalendarFeedContent() -> String? {
+//        var result: String?
+//
+//        let semaphore = DispatchSemaphore(value: 0)
+//        var request = URLRequest(url: URL(string: ELEARNING_DEADLINE_CALENDAR_FEED_URL)!)
+//        urlSession.dataTask(with: request) {
+//            data, _, _ in
+//            defer { semaphore.signal() }
+//            if let data = data {
+//                result = String(data: data, encoding: .utf8)
+//            }
+//        }.resume()
+//
+//        semaphore.wait()
+//
+//        if let calendarURL = result {
+//            request = URLRequest(url: URL(string: calendarURL)!)
+//            let _urlSession = URLSession(configuration: .default)
+//            _urlSession.dataTask(with: request) {
+//                data, _, _ in
+//                defer { semaphore.signal() }
+//                if let data = data {
+//                    result = String(data: data, encoding: .utf8)
+//                }
+//            }.resume()
+//
+//            semaphore.wait()
+//        }
+//
+//        return result
+//    }
+    func getDeadlineICSCalendar(deadlines: [Deadline]) -> ICSCalendar {
+        let calendar = ICSCalendar(name: "大夏学堂 Deadline 订阅")
+        for deadline in deadlines {
+            var startTime = deadline.startDateTime
+            let endTime = deadline.endDateTime
+            if(startTime == endTime) {
+                startTime = startTime.addingTimeInterval(-3600)
+            }
+            let event = ICSEvent(startDate: startTime,
+                     endDate: endTime,
+                     title: "\(deadline.calendarName) - " + deadline.title,
+                     note: deadline.url)
+            event.setAlarm(alarm: .init(trigger: .day(-1), action: .audio))
+            calendar.append(event: event)
+        }
+        return calendar
+    }
+}
