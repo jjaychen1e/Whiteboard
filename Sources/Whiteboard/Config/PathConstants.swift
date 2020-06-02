@@ -7,7 +7,8 @@
 
 import Foundation
 
-let PYTHON3_PATH = "/usr/local/bin/python3"
+let PYTHON3_PATH = "python3"
+//let PYTHON3_PATH = "/usr/local/bin/python3"
 let TESSERACT_PATH = "tesseract"
 //let TESSERACT_PATH = "/usr/local/bin/tesseract"
 let TEMP_PREXFIX = "\(FileManager.default.currentDirectoryPath)/tmp"
