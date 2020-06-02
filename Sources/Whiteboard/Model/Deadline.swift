@@ -36,6 +36,7 @@ class Deadline: Encodable {
             case title
             case eventType
             case calendarName
+            case url
             case calendarID
             case startDateTime
             case endDateTime
@@ -46,6 +47,7 @@ class Deadline: Encodable {
         try container.encode(title, forKey: .title)
         try container.encode(eventType, forKey: .eventType)
         try container.encode(calendarName, forKey: .calendarName)
+        try container.encode(url, forKey: .url)
         try container.encode(calendarID, forKey: .calendarID)
 
         let dateFormatter = DateFormatter()

@@ -153,15 +153,13 @@ do {
     generateHelperPy()
     
     #if os(Linux)
-        // 启动HTTPS服务器
-        let server = HTTPServer()
-        server.serverPort = PORT
-        server.serverName = "\(HOST_NAME)/ecnu-service"
-        server.addRoutes(routes)
-        server.ssl = (CERT_PATH, KEY_PATH)
-        server.certVerifyMode = .sslVerifyPeer
+        // Launch the HTTPS server.
+        try HTTPServer.launch(
+            .secureServer(TLSConfiguration(certPath: CERT_PATH, keyPath: KEY_PATH),
+                          name: HOST_NAME,
+                          port: PORT,
+                          routes: routes))
         
-        try server.start()
     #else
         // Launch the HTTP server.
         try HTTPServer.launch(
