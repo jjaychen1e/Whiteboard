@@ -152,13 +152,13 @@ do {
     
     generateHelperPy()
     
-    #if os(Linux)
+//    #if os(Linux)
         // Launch the HTTPS server.
         try HTTPServer.launch(
-            .secureServer(TLSConfiguration(certPath: CERT_PATH, keyPath: KEY_PATH),
-                          name: HOST_NAME,
-                          port: PORT,
-                          routes: routes))
+            [.secureServer(TLSConfiguration(certPath: CERT_PATH, keyPath: KEY_PATH),
+                           name: HOST_NAME,
+                           port: PORT,
+                           routes: routes)])
         
     #else
         // Launch the HTTP server.
