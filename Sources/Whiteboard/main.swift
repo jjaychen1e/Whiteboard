@@ -3,6 +3,7 @@ import PerfectHTTP
 import PerfectHTTPServer
 
 let PORT = 8181
+let DOMAIN_NAME = "http://application.jjaychen.me"
 let HOST_NAME = "localhost:\(PORT)"
 
 // Register your own routes and handlers
@@ -106,7 +107,7 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar") {
         let result = ElearningService(username: username, password: password).generateDeadlineCalendarID()
         if let calendarID = result.calendarID {
             response.status = .movedPermanently
-            response.setHeader(.location, value: "webcal://\(HOST_NAME)/ecnu-service/deadline-calendar-feed/\(calendarID)")
+            response.setHeader(.location, value: "webcal://\(DOMAIN_NAME)/ecnu-service/deadline-calendar-feed/\(calendarID)")
             response.completed()
             return
         }
