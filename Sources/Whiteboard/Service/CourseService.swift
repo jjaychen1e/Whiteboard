@@ -110,9 +110,32 @@ class CourseService: ECNUService {
         return ResultEntity.success(data: lessons)
     }
     
-//    func getICSFile() -> ResultEntity {
-//
-//    }
+    func getCourseCalendar() -> ResultEntity {
+        guard semesterBeginDateComp != nil else {
+            return ResultEntity.fail(code: .学期开学日期未设定)
+        }
+        
+        guard loginResult == .成功 else {
+            switch loginResult {
+            case .用户名密码错误:
+                return ResultEntity.fail(code: .用户名密码错误)
+            default:
+                return ResultEntity.fail(code: .未知原因登陆失败)
+            }
+        }
+        
+        guard lessons.count > 0 else {
+            return ResultEntity.fail(code: .课程安排为空)
+        }
+        
+        let calendarName = "\(year)-\(year + 1) 学年\(索引转学期["\(semesterIndex)"]!)课表"
+        let icsCalendar = getCourseICSCalendar(lessons: lessons)
+        
+        return ResultEntity.success(data: [
+            "fileName": calendarName + ".ics",
+            "content": icsCalendar.toICSDescription()
+        ])
+    }
 }
 
 // MARK: Get Course List
@@ -358,5 +381,22 @@ extension CourseService {
         semaphore.wait()
         
         return lessons
+    }
+}
+
+// MARK: - Get Course ICSCalendar
+extension CourseService {
+    private func getCourseICSCalendar(lessons: [Lesson]) -> ICSCalendar {
+        let calendar = ICSCalendar(name: "\(year)-\(year + 1) 学年\(索引转学期["\(semesterIndex)"]!)课表")
+        for lesson in lessons {
+            let event = ICSEvent(startDate: lesson.startDateTime,
+                                 endDate: lesson.endDateTime,
+                                 title: lesson.courseName,
+                                 location: lesson.location,
+                                 note: lesson.courseInstructor)
+            event.setAlarm(alarm: .init(trigger: .min(-30), action: .audio))
+            calendar.append(event: event)
+        }
+        return calendar
     }
 }

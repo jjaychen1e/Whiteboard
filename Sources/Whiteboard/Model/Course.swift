@@ -5,7 +5,7 @@
 //  Created by JJAYCHEN on 2020/5/28.
 //
 
-struct Course: Codable {
+struct Course: Encodable {
     let courseID: String
     let courseName: String
     let courseInstructor: String

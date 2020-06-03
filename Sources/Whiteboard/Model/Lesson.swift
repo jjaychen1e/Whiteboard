@@ -10,6 +10,7 @@ class Lesson: Encodable {
     let courseID: String
     let courseName: String
     let location: String
+    let courseInstructor: String
     let weekOffset: Int
     let dayOffset: Int
     let startTimeOffset: Int
@@ -17,9 +18,10 @@ class Lesson: Encodable {
     let startDateTime: Date
     let endDateTime: Date
     
-    init(courseID: String, courseName: String, location: String, weekOffset: Int, dayOffset: Int, startTimeOffset: Int, endTimeOffset: Int, startDateTime: Date, endDateTime: Date) {
+    init(courseID: String, courseName: String, courseInstructor: String, location: String, weekOffset: Int, dayOffset: Int, startTimeOffset: Int, endTimeOffset: Int, startDateTime: Date, endDateTime: Date) {
         self.courseID = courseID
         self.courseName = courseName
+        self.courseInstructor = courseInstructor
         self.location = location
         self.weekOffset = weekOffset
         self.dayOffset = dayOffset
@@ -32,6 +34,7 @@ class Lesson: Encodable {
     init(course: Course, location: String, weekOffset: Int, dayOffset: Int, startTimeOffset: Int, endTimeOffset: Int, startDateTime: Date, endDateTime: Date) {
         self.courseID = course.courseID
         self.courseName = course.courseName
+        self.courseInstructor = course.courseInstructor
         self.location = location
         self.weekOffset = weekOffset
         self.dayOffset = dayOffset
@@ -45,6 +48,7 @@ class Lesson: Encodable {
         enum CodingKeys: CodingKey {
             case courseID
             case courseName
+            case courseInstructor
             case location
             case weekOffset
             case dayOffset
@@ -57,6 +61,7 @@ class Lesson: Encodable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(courseID, forKey: .courseID)
         try container.encode(courseName, forKey: .courseName)
+        try container.encode(courseInstructor, forKey: .courseInstructor)
         try container.encode(location, forKey: .location)
         try container.encode(weekOffset, forKey: .weekOffset)
         try container.encode(dayOffset, forKey: .dayOffset)
