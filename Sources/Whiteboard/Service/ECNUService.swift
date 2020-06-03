@@ -111,14 +111,8 @@ extension ECNUService {
                 
                 try data!.write(to: captchaURL)
                 
-// 利用 Python 识别
-//                code = runCommand(launchPath: PYTHON3_PATH,
-//                                  arguments: [RECOGNIZE_PATH,
-//                                              path,
-//                                              TESSERACT_PATH])
-                
-                // 直接用 tesseract 更快
                 code = String(runCommand(launchPath: TESSERACT_PATH, arguments: [path, "stdout"]).prefix(4))
+                
                 /// 删除已经识别的验证码
                 let fileManager = FileManager.default
                 try fileManager.removeItem(at: captchaURL)
@@ -137,22 +131,22 @@ extension ECNUService {
     /// We don't have JavaScript library for Swift on Linux now.
     /// So we do this via Python script if os(Linux), otherwise, use JavaScriptCore.
     fileprivate func getRSA() -> String {
-        #if !os(Linux)
-        let context: JSContext = JSContext()
-        context.evaluateScript(desCode)
-        
-        let squareFunc = context.objectForKeyedSubscript("strEnc")
-        
-        let rsa = squareFunc?.call(withArguments: [username + password!, "1", "2", "3"]).toString() ?? ""
+//        #if !os(Linux)
+//        let context: JSContext = JSContext()
+//        context.evaluateScript(desCode)
+//
+//        let squareFunc = context.objectForKeyedSubscript("strEnc")
+//
+//        let rsa = squareFunc?.call(withArguments: [username + password!, "1", "2", "3"]).toString() ?? ""
+//
+//        return rsa
+//
+//        #else
+        let rsa = runCommand(launchPath: NODE_PATH,
+                             arguments: [JS_FILE_PATH, username + password!])
         
         return rsa
-        
-        #else
-        let rsa = runCommand(launchPath: JS_PATH,
-                             arguments: [username + password!])
-        
-        return rsa
-        #endif
+//        #endif
     }
     
     fileprivate func _login() -> LoginStatus {

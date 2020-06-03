@@ -146,6 +146,7 @@ do {
     try FileManager.default.createDirectory(atPath: FileManager.default.currentDirectoryPath + "/tmp", withIntermediateDirectories: true, attributes: nil)
     
     generateHelperJS()
+    initializePath()
     
     // Launch the HTTP server.
     try HTTPServer.launch(
