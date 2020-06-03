@@ -131,22 +131,22 @@ extension ECNUService {
     /// We don't have JavaScript library for Swift on Linux now.
     /// So we do this via Python script if os(Linux), otherwise, use JavaScriptCore.
     fileprivate func getRSA() -> String {
-//        #if !os(Linux)
-//        let context: JSContext = JSContext()
-//        context.evaluateScript(desCode)
-//
-//        let squareFunc = context.objectForKeyedSubscript("strEnc")
-//
-//        let rsa = squareFunc?.call(withArguments: [username + password!, "1", "2", "3"]).toString() ?? ""
-//
-//        return rsa
-//
-//        #else
+        #if !os(Linux)
+        let context: JSContext = JSContext()
+        context.evaluateScript(desCode)
+
+        let squareFunc = context.objectForKeyedSubscript("strEnc")
+
+        let rsa = squareFunc?.call(withArguments: [username + password!, "1", "2", "3"]).toString() ?? ""
+
+        return rsa
+
+        #else
         let rsa = runCommand(launchPath: NODE_PATH,
                              arguments: [JS_FILE_PATH, username + password!])
         
         return rsa
-//        #endif
+        #endif
     }
     
     fileprivate func _login() -> LoginStatus {
