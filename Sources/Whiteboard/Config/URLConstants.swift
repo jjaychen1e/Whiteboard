@@ -13,5 +13,6 @@ let IDS_URL = "http://applicationnewjw.ecnu.edu.cn/eams/courseTableForStd!index.
 let COURSE_TABLE_URL = "http://applicationnewjw.ecnu.edu.cn/eams/courseTableForStd!courseTable.action"
 let COURSE_QUERY_URL = "http://applicationnewjw.ecnu.edu.cn/eams/publicSearch!search.action"
 //let ELEARNING_PORTAL_URL = "https://portal1.ecnu.edu.cn/cas/login?service=https://elearning.ecnu.edu.cn/webapps/cas-hdsfdx-BBLEARN/index.jsp"
-let ELEARNING_DEADLINE_URL = "https://elearning.ecnu.edu.cn/webapps/calendar/calendarData/allCourseEvents"
+//let ELEARNING_DEADLINE_URL = "https://elearning.ecnu.edu.cn/webapps/calendar/calendarData/allCourseEvents"
+let ELEARNING_DEADLINE_URL = "https://elearning.ecnu.edu.cn/webapps/calendar/calendarData/selectedCalendarEvents"
 let ELEARNING_DEADLINE_CALENDAR_FEED_URL = "https://elearning.ecnu.edu.cn/webapps/calendar/calendarFeed/url"
