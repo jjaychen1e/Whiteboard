@@ -61,7 +61,7 @@ class ICSCalendar {
     
     var prodID: String = "jjacychen.me"
     
-    private var candicateColor: [String] = ["#1D9BF6", "#B90E28", "#FD8208", "FF2D55", "FECF0F"]
+    private var candicateColor: [String] = ["#1D9BF6", "#FB0055", "#FD8208", "FF2D55", "FECF0F"]
     var appleCalendarColor: String {
         candicateColor.randomElement() ?? "#1D9BF6"
     }
@@ -208,7 +208,7 @@ class ICSEventAlarm {
         TRIGGER:\(trigger.toString())
         DESCRIPTION:\(description)
         \(triggerAction == .audio ? "ATTACH;VALUE=URI:Chord" : "")
-        ACTION:\(triggerAction)
+        ACTION:\(triggerAction.toString())
         END:VALARM
         
         """
