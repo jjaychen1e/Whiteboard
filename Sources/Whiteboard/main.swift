@@ -24,20 +24,20 @@ routes.add(method: .get, uri: "/ecnu-service/course-list") {
         let currentYear = Int(dateFormatter.string(from: Date()))!
         
         guard (1...3).contains(semesterIndex), (2019...currentYear).contains(year) else {
-            try! response.setBody(json: ResultEntity.fail(code: .学年或学期索引不正确))
+            response.setBody(string: ResultEntity.fail(code: .学年或学期索引不正确).toJSONString() ?? "")
             response.completed()
             return
         }
         
         let result = CourseService(username: username, password: password, year: year, semesterIndex: semesterIndex).getCourseList()
         
-        try! response.setBody(json: result)
+        response.setBody(string: result.toJSONString() ?? "")
         response.completed()
         
         return
     }
     
-    try! response.setBody(json: ResultEntity.fail(code: .参数匹配失败))
+    response.setBody(string: ResultEntity.fail(code: .参数匹配失败).toJSONString() ?? "")
     response.completed()
     return
 }
@@ -58,7 +58,7 @@ routes.add(method: .get, uri: "/ecnu-service/lesson-list") {
         let currentYear = Int(dateFormatter.string(from: Date()))!
         
         guard (1...3).contains(semesterIndex), (2019...currentYear).contains(year) else {
-            try! response.setBody(json: ResultEntity.fail(code: .学年或学期索引不正确))
+            response.setBody(string: ResultEntity.fail(code: .学年或学期索引不正确).toJSONString() ?? "")
             response.completed()
             return
         }
@@ -66,13 +66,13 @@ routes.add(method: .get, uri: "/ecnu-service/lesson-list") {
         let result = CourseService(username: username, password: password, year: year, semesterIndex: semesterIndex)
             .getLessonList()
         
-        try! response.setBody(json: result)
+        response.setBody(string: result.toJSONString() ?? "")
         response.completed()
         
         return
     }
     
-    try! response.setBody(json: ResultEntity.fail(code: .参数匹配失败))
+    response.setBody(string: ResultEntity.fail(code: .参数匹配失败).toJSONString() ?? "")
     response.completed()
     return
 }
@@ -89,12 +89,12 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-list") {
         let result = ElearningService(username: username, password: password)
             .getDeadlineList(startTimestamp: startTimestamp, endTimestamp: endTimestamp)
         
-        try! response.setBody(json: result)
+        response.setBody(string: result.toJSONString() ?? "")
         response.completed()
         return
     }
     
-    try! response.setBody(json: ResultEntity.fail(code: .参数匹配失败))
+    response.setBody(string: ResultEntity.fail(code: .参数匹配失败).toJSONString() ?? "")
     response.completed()
     return
 }
@@ -111,10 +111,15 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar") {
             response.completed()
             return
         }
-        try! response.setBody(json: ResultEntity.fail(code: result.code))
+        response.setHeader(.contentEncoding, value: "utf-8")
+        response.setHeader(.contentType, value: "application/json;charset=utf-8")
+        response.setBody(string: ResultEntity.fail(code: result.code).toJSONString() ?? "")
         response.completed()
+        return
     }
-    try! response.setBody(json: ResultEntity.fail(code: .参数匹配失败))
+    response.setHeader(.contentEncoding, value: "utf-8")
+    response.setHeader(.contentType, value: "application/json;charset=utf-8")
+    response.setBody(string: ResultEntity.fail(code: .参数匹配失败).toJSONString() ?? "")
     response.completed()
 }
 
@@ -139,7 +144,7 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar-feed/{calendarID}
         }
     }
     
-    try! response.setBody(json: ResultEntity.fail(code: .出错))
+    response.setBody(string: ResultEntity.fail(code: .出错).toJSONString() ?? "")
     response.completed()
 }
 
