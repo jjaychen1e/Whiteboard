@@ -47,10 +47,9 @@ class ElearningService: ECNUService {
         }
         
         let calendar = Calendar.current
-        var beginDateComponents = calendar.dateComponents([.year], from: Date())
+        let beginDateComponents = calendar.dateComponents([.year], from: Date())
         var endDateComponents = beginDateComponents
-        beginDateComponents.year! -= 4
-        endDateComponents.year! += 4
+        endDateComponents.year! += 2
         let beginTimestamp = String(Int(calendar.date(from: beginDateComponents)!.timeIntervalSince1970)) + "000"
         let endTimestamp = String(Int(calendar.date(from: endDateComponents)!.timeIntervalSince1970)) + "000"
         let deadlines = getDeadlines(startTimestamp: beginTimestamp, endTimestamp: endTimestamp)
