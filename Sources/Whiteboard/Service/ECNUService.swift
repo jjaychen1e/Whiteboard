@@ -111,7 +111,7 @@ extension ECNUService {
                 
                 try data!.write(to: captchaURL)
                 
-                code = String(runCommand(launchPath: TESSERACT_PATH, arguments: [path, "stdout"]).prefix(4))
+                code = String(runCommand(launchPath: TESSERACT_PATH, arguments: [path, "stdout", "--dpi", "259"]).prefix(4))
                 
                 /// 删除已经识别的验证码
                 let fileManager = FileManager.default
