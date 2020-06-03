@@ -2,13 +2,8 @@ import Foundation
 import PerfectHTTP
 import PerfectHTTPServer
 
-#if os(Linux)
-    let PORT: UInt16 = 443
-    let HOST_NAME = "application.jjaychen.me"
-#else
-    let PORT = 8181
-    let HOST_NAME = "localhost:\(PORT)"
-#endif
+let PORT = 8181
+let HOST_NAME = "localhost:\(PORT)"
 
 // Register your own routes and handlers
 var routes = Routes()
@@ -151,22 +146,9 @@ do {
     try FileManager.default.createDirectory(atPath: FileManager.default.currentDirectoryPath + "/tmp", withIntermediateDirectories: true, attributes: nil)
     
     generateHelperPy()
-    
-    #if os(Linux)
-        // 启动HTTPS服务器
-        let server = HTTPServer()
-        server.serverPort = PORT
-        server.serverName = "\(HOST_NAME)/ecnu-service"
-        server.addRoutes(routes)
-        server.ssl = (CERT_PATH, KEY_PATH)
-//        server.certVerifyMode = .sslVerifyPeer
-        
-        try server.start()
-    #else
-        // Launch the HTTP server.
-        try HTTPServer.launch(
-            .server(name: "\(HOST_NAME)/ecnu-service", port: PORT, routes: routes))
-    #endif
+    // Launch the HTTP server.
+    try HTTPServer.launch(
+        .server(name: HOST_NAME, port: PORT, routes: routes))
 } catch {
     fatalError("\(error)") // fatal error launching one of the servers
 }
