@@ -39,7 +39,7 @@ func runCommand(launchPath: String, arguments: [String]) -> String {
 let desCode = """
 #!/usr/bin/env node
 
-var data = process.argv[2];
+var data = process.argv[3];
 console.log(strEnc(data, "1", "2", "3"));
 
 /*
