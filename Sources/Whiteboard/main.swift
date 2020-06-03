@@ -3,7 +3,7 @@ import PerfectHTTP
 import PerfectHTTPServer
 
 let PORT = 8181
-let DOMAIN_NAME = "http://application.jjaychen.me"
+let DOMAIN_NAME = "application.jjaychen.me"
 let HOST_NAME = "localhost:\(PORT)"
 
 // Register your own routes and handlers
