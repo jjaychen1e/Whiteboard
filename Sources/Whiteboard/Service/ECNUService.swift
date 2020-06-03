@@ -148,9 +148,8 @@ extension ECNUService {
         return rsa
         
         #else
-        let rsa = runCommand(launchPath: PYTHON3_PATH,
-                             arguments: [GETRSA_PATH,
-                                         username + password!])
+        let rsa = runCommand(launchPath: JS_PATH,
+                             arguments: [username + password!])
         
         return rsa
         #endif

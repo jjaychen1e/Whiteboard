@@ -145,7 +145,8 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar-feed/{calendarID}
 do {
     try FileManager.default.createDirectory(atPath: FileManager.default.currentDirectoryPath + "/tmp", withIntermediateDirectories: true, attributes: nil)
     
-    generateHelperPy()
+    generateHelperJS()
+    
     // Launch the HTTP server.
     try HTTPServer.launch(
         .server(name: HOST_NAME, port: PORT, routes: routes))

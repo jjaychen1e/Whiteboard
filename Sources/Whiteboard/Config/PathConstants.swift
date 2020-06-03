@@ -10,7 +10,7 @@ import Foundation
 let CERT_PATH = "/etc/letsencrypt/live/application.jjaychen.me/fullchain.pem"
 let KEY_PATH = "/etc/letsencrypt/live/application.jjaychen.me/privkey.pem"
 
-let PYTHON3_PATH = "/usr/bin/python3"
+let JS_PATH = TEMP_PREXFIX + "/getRSA.js"
 let TESSERACT_PATH = "/usr/bin/tesseract"
 let TEMP_PREXFIX = "\(FileManager.default.currentDirectoryPath)/tmp"
 

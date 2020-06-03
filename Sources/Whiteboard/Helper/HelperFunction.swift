@@ -8,45 +8,10 @@
 import Foundation
 
 // MARK: Helper functions
-
-func generateHelperPy() {
-//    var content = """
-//        import pytesseract
-//        import sys
-//        from PIL import Image
-//
-//        img = Image.open(sys.argv[1])
-//        tesseract_path = sys.argv[2]
-//
-//        pytesseract.pytesseract.tesseract_cmd = tesseract_path
-//        print(pytesseract.image_to_string(img), end='')
-//
-//        """
-//    
-//    do {
-//        try content.write(to: URL(fileURLWithPath: TEMP_PREXFIX + "/recognize.py"), atomically: true, encoding: String.Encoding.utf8)
-//    } catch {
-//        fatalError("\(error)")
-//    }
-    
+func generateHelperJS() {
     #if os(Linux)
-    
-    var content = """
-    import execjs
-    import sys
-    input = sys.argv[1]
-    
-    desCode = \"\"\"
-    \(desCode)
-    \"\"\"
-    
-    desJS = execjs.compile(desCode)
-    print(desJS.call('strEnc', input, '1', '2', '3'), end='')
-    
-    """
-    
     do {
-        try content.write(to: URL(fileURLWithPath: TEMP_PREXFIX + "/getRSA.py"), atomically: true, encoding: String.Encoding.utf8)
+        try desCode.write(to: URL(fileURLWithPath: TEMP_PREXFIX + "/getRSA.js"), atomically: true, encoding: String.Encoding.utf8)
     } catch {
         fatalError("\(error)")
     }
@@ -60,26 +25,9 @@ func runCommand(launchPath: String, arguments: [String]) -> String {
     
     let task = Process()
     
-//    #if os(Linux)
-//        task.executableURL = URL(string: launchPath)!
-//    #else
-//        task.launchPath = launchPath
-//    #endif
     task.launchPath = launchPath
-    
     task.arguments = arguments
     task.standardOutput = pipe
-    
-//    #if os(Linux)
-//        do {
-//            try task.run()
-//        } catch {
-//            print("\(error)")
-//        }
-//    #else
-//        task.launch()
-//    #endif
-    
     task.launch()
     
     let data = file.readDataToEndOfFile()
@@ -89,6 +37,11 @@ func runCommand(launchPath: String, arguments: [String]) -> String {
 // MARK: JavaScript Code
 
 let desCode = """
+#!/usr/bin/env node
+
+var data = process.argv[2];
+console.log(strEnc(data, "1", "2", "3"));
+
 /*
 * encrypt the string to string made up of hex
 * return the encrypted string
