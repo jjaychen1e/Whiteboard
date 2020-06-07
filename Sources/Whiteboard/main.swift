@@ -186,6 +186,15 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar-feed/{calendarID}
     response.completed()
 }
 
+routes.add(method: .get, uri: "/ecnu-service/semester-dates") {
+    _, response in
+    response.setHeader(.contentEncoding, value: "utf-8")
+    response.setHeader(.contentType, value: "application/json;charset=utf-8")
+    
+    response.setBody(string: ResultEntity.success(data: 开学日期).toJSONString() ?? "")
+    response.completed()
+}
+
 do {
     try FileManager.default.createDirectory(atPath: FileManager.default.currentDirectoryPath + "/tmp", withIntermediateDirectories: true, attributes: nil)
     
