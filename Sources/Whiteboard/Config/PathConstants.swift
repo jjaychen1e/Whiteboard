@@ -27,7 +27,7 @@ var CAPTCHA_PATH: String {
 
     let dateformatter = DateFormatter()
     dateformatter.dateFormat = "YYYY-MM-dd-HH-mm-ss"
-    let randomSuffic = String(Int.random(in: 0...10))
+    let randomSuffic = String(Int.random(in: 0...1000))
     let suffix = dateformatter.string(from: Date()) + "-" + randomSuffic + "-captcha.png"
 
     return prefix + "/" + suffix
