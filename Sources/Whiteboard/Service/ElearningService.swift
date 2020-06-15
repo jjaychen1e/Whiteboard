@@ -11,13 +11,8 @@ import Foundation
 
 class ElearningService: ECNUService {
     func getDeadlineList(startTimestamp: String, endTimestamp: String) -> ResultEntity {
-        guard loginResult == .成功 else {
-            switch loginResult {
-            case .用户名密码错误:
-                return ResultEntity.fail(code: .用户名密码错误)
-            default:
-                return ResultEntity.fail(code: .未知原因登陆失败)
-            }
+        guard loginResult == .登录成功 else {
+            return ResultEntity.fail(code: loginResult.toResultCode())
         }
         let deadlines = getDeadlines(startTimestamp: startTimestamp, endTimestamp: endTimestamp)
         if deadlines.count > 0 {
@@ -29,21 +24,16 @@ class ElearningService: ECNUService {
     
     /// Generate corresponding deadline calendarID if success, otherwise return nil
     func generateDeadlineCalendarID() -> (isSuccess: Bool, code: ResultCode, calendarID: String?) {
-        guard loginResult == .成功, isUserInfoSaveSuccess == true else {
-            return (false, loginResult == .成功 ? .数据库保存失败 : loginResult.toResultCode(), nil)
+        guard loginResult == .登录成功, isUserInfoSaveSuccess == true else {
+            return (false, loginResult == .登录成功 ? .数据库保存失败 : loginResult.toResultCode(), nil)
         }
         
         return (true, .成功, username.encodeToCalendarID())
     }
     
     func getDeadlineCalendar() -> ResultEntity {
-        guard loginResult == .成功 else {
-            switch loginResult {
-            case .用户名密码错误:
-                return ResultEntity.fail(code: .用户名密码错误)
-            default:
-                return ResultEntity.fail(code: .未知原因登陆失败)
-            }
+        guard loginResult == .登录成功 else {
+            return ResultEntity.fail(code: loginResult.toResultCode())
         }
         
         let calendar = Calendar.current
@@ -75,7 +65,7 @@ extension ElearningService {
         
         let semaphore = DispatchSemaphore(value: 0)
         
-        let queryURL = "\(ELEARNING_DEADLINE_URL)?start=\(startTimestamp)&end=\(endTimestamp)"
+        let queryURL = "\(ECNU_ELEARNING_DEADLINE_URL)?start=\(startTimestamp)&end=\(endTimestamp)"
         let request = URLRequest(url: URL(string: queryURL)!)
         urlSession.dataTask(with: request) {
             data, _, _ in

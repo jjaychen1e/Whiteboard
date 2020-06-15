@@ -9,6 +9,7 @@ import Foundation
 
 let JS_FILE_PATH = TEMP_PREXFIX + "/getRSA.js"
 var NODE_PATH = "/usr/bin/node"
+var CONVERT_PATH = "/usr/bin/convert"
 var TESSERACT_PATH = "/usr/bin/tesseract"
 let TEMP_PREXFIX = "\(FileManager.default.currentDirectoryPath)/tmp"
 
@@ -26,9 +27,9 @@ var CAPTCHA_PATH: String {
     let prefix = TEMP_PREXFIX
 
     let dateformatter = DateFormatter()
-    dateformatter.dateFormat = "YYYY-MM-dd-HH-mm-ss"
+    dateformatter.dateFormat = "YYYY-MM-dd-HH-mm-ss-SSS"
     let randomSuffic = String(Int.random(in: 0...1000))
-    let suffix = dateformatter.string(from: Date()) + "-" + randomSuffic + "-captcha.png"
+    let suffix = dateformatter.string(from: Date()) + "-" + randomSuffic + "-captcha.jpg"
 
     return prefix + "/" + suffix
 }
@@ -41,6 +42,11 @@ func initializePath() {
     } else {
         fatalError("tesseract cannot be found in both '/usr/bin/tesseract' or '/usr/local/bin/tesseract'")
     }
+    
+    // Generate tesseract config file.
+    let tesseractRealPath = runCommand(launchPath: "/usr/bin/readlink", arguments: [TESSERACT_PATH])
+    let captchaConfigFilePath =  tesseractRealPath[...tesseractRealPath.lastIndex(of: "/")!] + "share/tessdata/tessconfigs/captcha"
+    _ = runCommand(launchPath: "/bin/echo", arguments: ["\"tessedit_char_whitelist 0123456789\"", ">",  String(captchaConfigFilePath)])
 
     if FileManager.default.fileExists(atPath: "/usr/bin/node") {
         NODE_PATH = "/usr/bin/node"
@@ -48,5 +54,13 @@ func initializePath() {
         NODE_PATH = "/usr/local/bin/node"
     } else {
         fatalError("NodeJS cannot be found in both '/usr/bin/node' or '/usr/local/bin/node'")
+    }
+    
+    if FileManager.default.fileExists(atPath: "/usr/bin/convert") {
+        CONVERT_PATH = "/usr/bin/convert"
+    } else if FileManager.default.fileExists(atPath: "/usr/local/bin/convert") {
+        CONVERT_PATH = "/usr/local/bin/convert"
+    } else {
+        fatalError("ImageMagick cannot be found in both '/usr/bin/convert' or '/usr/local/bin/convert'")
     }
 }

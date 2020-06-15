@@ -8,6 +8,49 @@ let HOST_NAME = "localhost:\(PORT)"
 
 // Register your own routes and handlers
 var routes = Routes()
+
+routes.add(method: .get, uri: "/ecnu-service/login-verify") {
+    request, response in
+    response.setHeader(.contentEncoding, value: "utf-8")
+    response.setHeader(.contentType, value: "application/json;charset=utf-8")
+    
+    if let username = request.param(name: "username"),
+        let password = request.param(name: "password") {
+        switch EcardService(username: username, password: password).loginResult {
+        case .登录成功:
+            response.setBody(string: ResultEntity.success(data: true).toJSONString() ?? "")
+        case .用户名密码错误:
+            response.setBody(string: ResultEntity.fail(code: .用户名密码错误).toJSONString() ?? "")
+        default:
+            response.setBody(string: ResultEntity.fail(code: .出错).toJSONString() ?? "")
+        }
+    } else {
+        response.setBody(string: ResultEntity.fail(code: .参数匹配失败).toJSONString() ?? "")
+    }
+    
+    response.completed()
+}
+
+routes.add(method: .get, uri: "/ecnu-service/real-name") {
+    request, response in
+    response.setHeader(.contentEncoding, value: "utf-8")
+    response.setHeader(.contentType, value: "application/json;charset=utf-8")
+    
+    if let username = request.param(name: "username"),
+        let password = request.param(name: "password") {
+        let service = EcardService(username: username, password: password)
+        if let realName =  service.realName {
+            response.setBody(string: ResultEntity.success(data: realName).toJSONString() ?? "")
+        } else {
+            response.setBody(string: ResultEntity.fail(code: service.loginResult.toResultCode()).toJSONString() ?? "")
+        }
+    } else {
+        response.setBody(string: ResultEntity.fail(code: .参数匹配失败).toJSONString() ?? "")
+    }
+    
+    response.completed()
+}
+
 routes.add(method: .get, uri: "/ecnu-service/course-list") {
     request, response in
     response.setHeader(.contentEncoding, value: "utf-8")

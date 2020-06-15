@@ -29,22 +29,18 @@ class ECNUService {
     /// It will be initialized during login process.
     internal var passwordLength: Int?
     
-//    private var _realName: String?
-//
-//    internal var realName: String {
-//        get {
-//            _realName ?? username
-//        }
-//        set {
-//            _realName = newValue
-//        }
-//    }
+    internal var realName: String? {
+        if loginResult == .登录成功 {
+            return getRealname()
+        }
+        return nil
+    }
     
-    private var _loginResult: LoginStatus?
+    private var _loginResult: ECNULoginStatus?
     
     /// This is a computed property. Once we access this property for the first time,
     /// it will automatically try to login and then return the result.
-    internal var loginResult: LoginStatus {
+    internal var loginResult: ECNULoginStatus {
         if let loginResult = _loginResult {
             return loginResult
         } else {
@@ -69,18 +65,18 @@ class ECNUService {
         self.rsa = rsa
         self.passwordLength = passwordLength
         self.password = nil
-
+        
         let urlSessionConfiguration = URLSessionConfiguration.ephemeral
         urlSessionConfiguration.httpAdditionalHeaders = ["Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8"]
         self.urlSession = URLSession(configuration: urlSessionConfiguration)
     }
     
-    internal func login() -> LoginStatus {
+    internal func login() -> ECNULoginStatus {
         let loginResult = _login()
         switch loginResult {
-        case .成功, .用户名密码错误:
+        case .登录成功:
             return loginResult
-        case .未知错误, .验证码有误:
+        case .登录失败:
             // Try again.
             return _login()
         }
@@ -90,17 +86,14 @@ class ECNUService {
 // MARK: - Login Service
 
 extension ECNUService {
-    /// Recognize the captcha via Python script.
-    ///
-    /// We don't import any swift tesseract module right now, so we
-    /// do recognize job via Python.
+    /// Recognize the captcha via tesseract
     fileprivate func getCaptcha() -> String {
         let semaphore = DispatchSemaphore(value: 0)
         
         /// Save Captacha to file system.
         var code = "8888"
         
-        let request = URLRequest(url: URL(string: CAPTCHA_URL)!)
+        let request = URLRequest(url: URL(string: ECNU_CAPTCHA_URL)!)
         urlSession.dataTask(with: request) {
             data, _, error in
             defer { semaphore.signal() }
@@ -111,7 +104,7 @@ extension ECNUService {
                 
                 try data!.write(to: captchaURL)
                 
-                code = String(runCommand(launchPath: TESSERACT_PATH, arguments: [path, "stdout", "--dpi", "259"]).prefix(4))
+                code = String(runCommand(launchPath: TESSERACT_PATH, arguments: [path, "stdout", "--dpi", "259", "captcha"]).prefix(4))
                 
                 /// 删除已经识别的验证码
                 let fileManager = FileManager.default
@@ -126,21 +119,18 @@ extension ECNUService {
         return code
     }
     
-    /// Calculate rsa value via Python script
-    ///
-    /// We don't have JavaScript library for Swift on Linux now.
-    /// So we do this via Python script if os(Linux), otherwise, use JavaScriptCore.
+    /// Calculate rsa value via NodeJS
     fileprivate func getRSA() -> String {
         #if !os(Linux)
         let context: JSContext = JSContext()
         context.evaluateScript(desCode)
-
+        
         let squareFunc = context.objectForKeyedSubscript("strEnc")
-
+        
         let rsa = squareFunc?.call(withArguments: [username + password!, "1", "2", "3"]).toString() ?? ""
-
+        
         return rsa
-
+        
         #else
         let rsa = runCommand(launchPath: NODE_PATH,
                              arguments: [JS_FILE_PATH, username + password!])
@@ -149,15 +139,16 @@ extension ECNUService {
         #endif
     }
     
-    fileprivate func _login() -> LoginStatus {
+    fileprivate func _login() -> ECNULoginStatus {
+        defer{ print("\(username) \(status)") }
         let semaphore = DispatchSemaphore(value: 0)
         let semaphore1 = DispatchSemaphore(value: 0)
         let semaphore2 = DispatchSemaphore(value: 0)
         
-        var request = URLRequest(url: URL(string: PORTAL_URL)!)
+        var request = URLRequest(url: URL(string: ECNU_PORTAL_URL)!)
         urlSession.dataTask(with: request) {
             _, _, _ in
-            defer { semaphore1.signal() }
+            do { semaphore1.signal() }
         }.resume()
         
         DispatchQueue.global().async {
@@ -181,9 +172,9 @@ extension ECNUService {
             "_eventId": "submit"
         ]
         
-        var status: LoginStatus?
+        var status: ECNULoginStatus = .登录失败
         
-        request = URLRequest(url: URL(string: PORTAL_URL)!)
+        request = URLRequest(url: URL(string: ECNU_PORTAL_URL)!)
         request.encodeParameters(parameters: postData)
         
         urlSession.dataTask(with: request) {
@@ -191,37 +182,52 @@ extension ECNUService {
             defer { semaphore.signal() }
             if let data = data, let content = String(data: data, encoding: .utf8) {
                 if let doc = try? HTML(html: content, encoding: .utf8) {
-                    for err in doc.xpath("//*[@id='errormsg']") {
-                        switch err.text {
-                        case "用户名密码错误":
-                            status = LoginStatus.用户名密码错误
-                        case "验证码有误":
-                            status = LoginStatus.验证码有误
-                        default:
-                            status = LoginStatus.未知错误
-                        }
+                    for _ in doc.xpath("//*[@id='errormsg']") {
+                        status = .登录失败
                         return
                     }
-//                    if let realName = doc.xpath("//a[contains(@title, \"查看登录记录\")]/font/text()").first?.text {
-//                        self.realName = realName
-//                    }
-                    status = LoginStatus.成功
+                    status = ECNULoginStatus.登录成功
                     self.isUserInfoSaveSuccess = MySQLConnector.updateUser(schoolID: self.username,
                                                                            rsa: self.rsa!,
                                                                            passwordLength: self.passwordLength!)
+                    return
                 } else {
-                    status = LoginStatus.未知错误
+                    status = ECNULoginStatus.登录失败
+                    return
                 }
             } else {
-                status = LoginStatus.未知错误
+                status = ECNULoginStatus.登录失败
+                return
             }
         }.resume()
         
         semaphore.wait()
-        if let status = status {
-            return status
-        } else {
-            return LoginStatus.未知错误
-        }
+    
+        return status
+    }
+}
+
+// MARK: - User Info Service
+
+extension ECNUService {
+    private func getRealname() -> String? {
+        let semaphore = DispatchSemaphore(value: 0)
+        var realName: String?
+        
+        let request = URLRequest(url: URL(string: ECNU_PLAN_PANEL_URL)!)
+        urlSession.dataTask(with: request) {
+            data, _, _ in
+            defer { semaphore.signal() }
+            if let data = data, let content = String(data: data, encoding: .utf8) {
+                if let doc = try? HTML(html: content, encoding: .utf8) {
+                    if let name = doc.xpath("/html/body/table/tr[1]/td[4]/text()").first?.text {
+                        realName = name
+                    }
+                }
+            }
+        }.resume()
+        
+        semaphore.wait()
+        return realName
     }
 }

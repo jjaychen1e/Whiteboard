@@ -73,13 +73,8 @@ class CourseService: ECNUService {
             return ResultEntity.fail(code: .学期开学日期未设定)
         }
         
-        guard loginResult == .成功 else {
-            switch loginResult {
-            case .用户名密码错误:
-                return ResultEntity.fail(code: .用户名密码错误)
-            default:
-                return ResultEntity.fail(code: .未知原因登陆失败)
-            }
+        guard loginResult == .登录成功 else {
+            return ResultEntity.fail(code: loginResult.toResultCode())
         }
         
         guard courses.count > 0 else {
@@ -94,13 +89,8 @@ class CourseService: ECNUService {
             return ResultEntity.fail(code: .学期开学日期未设定)
         }
         
-        guard loginResult == .成功 else {
-            switch loginResult {
-            case .用户名密码错误:
-                return ResultEntity.fail(code: .用户名密码错误)
-            default:
-                return ResultEntity.fail(code: .未知原因登陆失败)
-            }
+        guard loginResult == .登录成功 else {
+            return ResultEntity.fail(code: loginResult.toResultCode())
         }
         
         guard lessons.count > 0 else {
@@ -115,13 +105,8 @@ class CourseService: ECNUService {
             return ResultEntity.fail(code: .学期开学日期未设定)
         }
         
-        guard loginResult == .成功 else {
-            switch loginResult {
-            case .用户名密码错误:
-                return ResultEntity.fail(code: .用户名密码错误)
-            default:
-                return ResultEntity.fail(code: .未知原因登陆失败)
-            }
+        guard loginResult == .登录成功 else {
+            return ResultEntity.fail(code: loginResult.toResultCode())
         }
         
         guard lessons.count > 0 else {
@@ -146,7 +131,7 @@ extension CourseService {
         
         var ids = ""
         
-        let request = URLRequest(url: URL(string: IDS_URL)!)
+        let request = URLRequest(url: URL(string: ECNU_IDS_URL)!)
         urlSession.dataTask(with: request) {
             data, _, _ in
             defer { semaphore.signal() }
@@ -184,7 +169,7 @@ extension CourseService {
             "ids": ids
         ]
         
-        var request = URLRequest(url: URL(string: COURSE_TABLE_URL)!)
+        var request = URLRequest(url: URL(string: ECNU_COURSE_TABLE_URL)!)
         request.encodeParameters(parameters: postData)
         urlSession.dataTask(with: request) {
             data, _, _ in
@@ -272,7 +257,7 @@ extension CourseService {
             "lesson.no": course.courseID
         ]
         
-        var request = URLRequest(url: URL(string: COURSE_QUERY_URL)!)
+        var request = URLRequest(url: URL(string: ECNU_COURSE_QUERY_URL)!)
         request.encodeParameters(parameters: postData)
         urlSession.dataTask(with: request) {
             data, _, _ in
