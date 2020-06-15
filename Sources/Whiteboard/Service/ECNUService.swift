@@ -187,7 +187,7 @@ extension ECNUService {
                         return
                     }
                     status = ECNULoginStatus.登录成功
-                    # self.isUserInfoSaveSuccess = MySQLConnector.updateUser(schoolID: self.username,
+                    self.isUserInfoSaveSuccess = MySQLConnector.updateUser(schoolID: self.username,
                                                                            rsa: self.rsa!,
                                                                            passwordLength: self.passwordLength!)
                     return
