@@ -42,11 +42,17 @@ func initializePath() {
     } else {
         fatalError("tesseract cannot be found in both '/usr/bin/tesseract' or '/usr/local/bin/tesseract'")
     }
-    
+
     // Generate tesseract config file.
+    #if os(Linux)
+    let tessconfigsDirectoryPath = runCommand(launchPath: "/usr/bin/find", arguments: ["/usr/share/", "-name", "tessconfigs"])
+    let captchaConfigFilePath = tessconfigsDirectoryPath + "/captcha"
+    #else
     let tesseractRealPath = runCommand(launchPath: "/usr/bin/readlink", arguments: [TESSERACT_PATH])
-    let captchaConfigFilePath =  tesseractRealPath[...tesseractRealPath.lastIndex(of: "/")!] + "share/tessdata/tessconfigs/captcha"
-    _ = runCommand(launchPath: "/bin/echo", arguments: ["\"tessedit_char_whitelist 0123456789\"", ">",  String(captchaConfigFilePath)])
+    let captchaConfigFilePath = tesseractRealPath[...tesseractRealPath.lastIndex(of: "/")!] + "share/tessdata/tessconfigs/captcha"
+    #endif
+
+    _ = runCommand(launchPath: "/bin/echo", arguments: ["\"tessedit_char_whitelist 0123456789\"", ">", String(captchaConfigFilePath)])
 
     if FileManager.default.fileExists(atPath: "/usr/bin/node") {
         NODE_PATH = "/usr/bin/node"
@@ -55,7 +61,7 @@ func initializePath() {
     } else {
         fatalError("NodeJS cannot be found in both '/usr/bin/node' or '/usr/local/bin/node'")
     }
-    
+
     if FileManager.default.fileExists(atPath: "/usr/bin/convert") {
         CONVERT_PATH = "/usr/bin/convert"
     } else if FileManager.default.fileExists(atPath: "/usr/local/bin/convert") {
