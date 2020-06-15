@@ -46,14 +46,19 @@ func initializePath() {
     // Generate tesseract config file.
     #if os(Linux)
     let tessconfigsDirectoryPath = runCommand(launchPath: "/usr/bin/find", arguments: ["/usr/share/", "-name", "tessconfigs"])
-    let captchaConfigFilePath = tessconfigsDirectoryPath + "/captcha"
     #else
     let tesseractRealPath = runCommand(launchPath: "/usr/bin/readlink", arguments: [TESSERACT_PATH])
-    let captchaConfigFilePath = tesseractRealPath[...tesseractRealPath.lastIndex(of: "/")!] + "share/tessdata/tessconfigs/captcha"
+    let tessconfigsDirectoryPath = TESSERACT_PATH.truncation() + "/" + tesseractRealPath.truncation(2) + "/share/tessdata/tessconfigs"
     #endif
 
-    _ = runCommand(launchPath: "/bin/echo", arguments: ["\"tessedit_char_whitelist 0123456789\"", ">", String(captchaConfigFilePath)])
-
+    let captchaConfigFilePath = tessconfigsDirectoryPath + "/captcha"
+    
+    if FileManager.default.fileExists(atPath: tessconfigsDirectoryPath) {
+        try! "tessedit_char_whitelist 0123456789\n".data(using: .utf8)?.write(to: URL(fileURLWithPath: captchaConfigFilePath))
+    } else {
+        fatalError("Cannot find tessconfigs directory: \(tessconfigsDirectoryPath)")
+    }
+    
     if FileManager.default.fileExists(atPath: "/usr/bin/node") {
         NODE_PATH = "/usr/bin/node"
     } else if FileManager.default.fileExists(atPath: "/usr/local/bin/node") {
@@ -68,5 +73,24 @@ func initializePath() {
         CONVERT_PATH = "/usr/local/bin/convert"
     } else {
         fatalError("ImageMagick cannot be found in both '/usr/bin/convert' or '/usr/local/bin/convert'")
+    }
+}
+
+extension String {
+    // 截断至最后一个 '/'
+    fileprivate func truncation() -> String {
+        if let index = lastIndex(of: "/") {
+            return String(self[..<index])
+        }
+        return ""
+    }
+
+    // 截断至最后第 i 个 '/'
+    fileprivate func truncation(_ time: Int) -> String {
+        var result = self
+        for _ in 1...time {
+            result = result.truncation()
+        }
+        return result
     }
 }
