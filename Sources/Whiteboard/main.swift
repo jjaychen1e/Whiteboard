@@ -16,9 +16,10 @@ routes.add(method: .get, uri: "/ecnu-service/login-verify") {
     
     if let username = request.param(name: "username"),
         let password = request.param(name: "password") {
-        switch EcardService(username: username, password: password).loginResult {
+        let service = EcardService(username: username, password: password)
+        switch service.loginResult {
         case .登录成功:
-            response.setBody(string: ResultEntity.success(data: true).toJSONString() ?? "")
+            response.setBody(string: ResultEntity.success(message: service.realName ?? "", data: true).toJSONString() ?? "")
         case .用户名密码错误:
             response.setBody(string: ResultEntity.fail(code: .用户名密码错误, data: false).toJSONString() ?? "")
         default:
