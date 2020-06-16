@@ -20,12 +20,12 @@ routes.add(method: .get, uri: "/ecnu-service/login-verify") {
         case .登录成功:
             response.setBody(string: ResultEntity.success(data: true).toJSONString() ?? "")
         case .用户名密码错误:
-            response.setBody(string: ResultEntity.fail(code: .用户名密码错误).toJSONString() ?? "")
+            response.setBody(string: ResultEntity.fail(code: .用户名密码错误, data: false).toJSONString() ?? "")
         default:
-            response.setBody(string: ResultEntity.fail(code: .出错).toJSONString() ?? "")
+            response.setBody(string: ResultEntity.fail(code: .出错, data: false).toJSONString() ?? "")
         }
     } else {
-        response.setBody(string: ResultEntity.fail(code: .参数匹配失败).toJSONString() ?? "")
+        response.setBody(string: ResultEntity.fail(code: .参数匹配失败, data: false).toJSONString() ?? "")
     }
     
     response.completed()
