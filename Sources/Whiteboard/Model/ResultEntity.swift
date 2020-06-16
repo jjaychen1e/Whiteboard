@@ -34,6 +34,10 @@ class ResultEntity: Encodable {
         ResultEntity(code: .成功, message: "success", data: data)
     }
     
+    static func success<T: Encodable>(message: String, data: T?) -> ResultEntity {
+        ResultEntity(code: .成功, message: message, data: data)
+    }
+    
     static func fail<T: Encodable>(code: ResultCode, data: T) -> ResultEntity {
         ResultEntity(code: code, message: code.toString(), data: data)
     }
