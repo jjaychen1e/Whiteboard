@@ -75,8 +75,8 @@ extension ElearningService {
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
                 
-                let result = (try? JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]] ?? [])!
-                for deadline in result {
+                let result = try? JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]] ?? []
+                for deadline in result ?? [] {
                     let deadlineItem = Deadline(id: deadline["id"] as! String,
                                                 title: deadline["title"] as! String,
                                                 eventType: deadline["eventType"] as! String,
