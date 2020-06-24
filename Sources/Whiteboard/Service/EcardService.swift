@@ -68,7 +68,7 @@ class EcardService {
 
 extension EcardService {
     fileprivate func _login() -> EcardLoginStatus {
-        defer{ print("\(username) \(status)") }
+        defer{ print("\(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)) \(username) \(status)") }
         let semaphore = DispatchSemaphore(value: 0)
         
         var code = getCaptcha()

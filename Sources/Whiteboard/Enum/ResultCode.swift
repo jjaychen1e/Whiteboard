@@ -47,7 +47,7 @@ enum ResultCode: Int, Encodable {
         case .用户名密码错误:
             return "用户名密码错误"
         case .登录失败:
-            return "登录失败，请尝试重新请求"
+            return "登录失败，请检查用户名密码，或请尝试重新请求"
         case .数据库保存失败:
             return "数据库保存失败"
         case .IDS获取失败:
