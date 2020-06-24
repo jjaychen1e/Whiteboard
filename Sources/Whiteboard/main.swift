@@ -216,12 +216,15 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar-feed/{calendarID}
             let calendarResult = ElearningService(username: queryResult.username, rsa: queryResult.rsa, passwordLength: queryResult.passwordLength)
                 .getDeadlineCalendar()
             if calendarResult.code == .成功, let data = calendarResult.data as? [String: String] {
+                print("\(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)) \(queryResult.username) updates deadline calendar successfully.")
                 response.setHeader(.contentType, value: "text/calendar;charset=utf-8")
                 response.setHeader(.contentDisposition,
                                    value: "attachment; filename=\"\(data["fileName"]!)\"")
                 response.setBody(string: data["content"]!)
                 response.completed()
                 return
+            } else {
+                print("\(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)) \(queryResult.username) updates deadline calendar failed.")
             }
         }
     }
