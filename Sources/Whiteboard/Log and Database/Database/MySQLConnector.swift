@@ -10,7 +10,7 @@ import PerfectMySQL
 
 let databaseHost = "127.0.0.1"
 let databaseUser = "root"
-let databasePassword = "Chen270499"
+let databasePassword = "Chen27049999"
 let databaseSchema = "ecnu_service_schema"
 //
 class MySQLConnector {
