@@ -102,13 +102,15 @@ extension ECNUService {
                 let path = CAPTCHA_PATH // 取一个随机名
                 let captchaURL = URL(fileURLWithPath: path)
                 
-                try data!.write(to: captchaURL)
-                
-                code = String(runCommand(launchPath: TESSERACT_PATH, arguments: [path, "stdout", "--dpi", "259", "captcha"]).prefix(4))
-                
-                /// 删除已经识别的验证码
-                let fileManager = FileManager.default
-                try fileManager.removeItem(at: captchaURL)
+                if let data = data {
+                    try data.write(to: captchaURL)
+
+                    code = String(runCommand(launchPath: TESSERACT_PATH, arguments: [path, "stdout", "--dpi", "259", "captcha"]).prefix(4))
+                    
+                    /// 删除已经识别的验证码
+                    let fileManager = FileManager.default
+                    try fileManager.removeItem(at: captchaURL)
+                }
             } catch {
                 fatalError("\(error)")
             }
