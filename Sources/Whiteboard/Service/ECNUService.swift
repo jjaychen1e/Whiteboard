@@ -142,7 +142,7 @@ extension ECNUService {
     }
     
     fileprivate func _login() -> ECNULoginStatus {
-        defer{ print("\(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)) \(username) \(status)") }
+        defer{ print("\(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)) \(username) \(status.toString())") }
         let semaphore = DispatchSemaphore(value: 0)
         let semaphore1 = DispatchSemaphore(value: 0)
         let semaphore2 = DispatchSemaphore(value: 0)
