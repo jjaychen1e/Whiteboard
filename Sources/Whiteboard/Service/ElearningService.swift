@@ -43,9 +43,10 @@ class ElearningService: ECNUService {
         let beginTimestamp = String(Int(calendar.date(from: beginDateComponents)!.timeIntervalSince1970)) + "000"
         let endTimestamp = String(Int(calendar.date(from: endDateComponents)!.timeIntervalSince1970)) + "000"
         let deadlines = getDeadlines(startTimestamp: beginTimestamp, endTimestamp: endTimestamp)
-        guard deadlines.count > 0 else {
-            return ResultEntity.fail(code: .期限任务列表为空)
-        }
+        // Return an empty calendar if deadlines.count == 0
+//        guard deadlines.count > 0 else {
+//            return ResultEntity.fail(code: .期限任务列表为空)
+//        }
         
         let calendarName = "大夏学堂 Deadline 订阅"
         let icsCalendar = getDeadlineICSCalendar(deadlines: deadlines)
