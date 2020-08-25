@@ -59,7 +59,9 @@ class CourseService: ECNUService {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         
         /// 设置开学时间
-        if let semesterBeginDate = dateFormatter.date(from: 开学日期[String(year)]![String(semesterIndex)]!) {
+        if let semesterBeginDateStrings = 开学日期[String(year)],
+            let semesterBeginDateString = semesterBeginDateStrings[String(semesterIndex)],
+            let semesterBeginDate = dateFormatter.date(from: semesterBeginDateString) {
             self.semesterBeginDateComp = calendar.dateComponents([.year, .month, .day], from: semesterBeginDate)
         } else {
             self.semesterBeginDateComp = nil
