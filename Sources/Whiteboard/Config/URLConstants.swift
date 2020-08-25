@@ -14,7 +14,9 @@ let ECNU_IDS_URL = "http://applicationnewjw.ecnu.edu.cn/eams/courseTableForStd!i
 let ECNU_COURSE_TABLE_URL = "http://applicationnewjw.ecnu.edu.cn/eams/courseTableForStd!courseTable.action"
 let ECNU_COURSE_QUERY_URL = "http://applicationnewjw.ecnu.edu.cn/eams/publicSearch!search.action"
 let ECNU_PLAN_PANEL_URL = "http://applicationnewjw.ecnu.edu.cn/eams/myPlanCompl.action"
-let ECNU_ELEARNING_DEADLINE_URL = "https://elearning.ecnu.edu.cn/webapps/calendar/calendarData/selectedCalendarEvents"
+//let ECNU_ELEARNING_DEADLINE_URL = "https://elearning.ecnu.edu.cn/webapps/calendar/calendarData/selectedCalendarEvents"
+// selectedCalendarEvents 会受用户在 elearning 上的选择影响
+let ECNU_ELEARNING_DEADLINE_URL = "https://elearning.ecnu.edu.cn/webapps/calendar/calendarData/allCourseEvents"
 let ECNU_ELEARNING_DEADLINE_CALENDAR_FEED_URL = "https://elearning.ecnu.edu.cn/webapps/calendar/calendarFeed/url"
 
 // MARK: - Ecard Service
