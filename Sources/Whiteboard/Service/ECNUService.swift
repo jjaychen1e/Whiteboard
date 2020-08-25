@@ -74,7 +74,7 @@ class ECNUService {
     internal func login() -> ECNULoginStatus {
         let loginResult = _login()
         switch loginResult {
-        case .登录成功:
+        case .登录成功, .账号被锁定一分钟:
             return loginResult
         case .登录失败:
             // Try again.
@@ -183,6 +183,11 @@ extension ECNUService {
             data, _, _ in
             defer { semaphore.signal() }
             if let data = data, let content = String(data: data, encoding: .utf8) {
+                guard !content.contains(string: "访问被拒绝") else {
+                    status = .账号被锁定一分钟
+                    return
+                }
+                
                 if let doc = try? HTML(html: content, encoding: .utf8) {
                     for _ in doc.xpath("//*[@id='errormsg']") {
                         status = .登录失败

@@ -11,6 +11,7 @@ enum ECNULoginStatus: Int {
 //    case 验证码有误 = 2
 //    case 未知错误 = 3
     case 登录失败 = 4
+    case 账号被锁定一分钟 = 5
 
     func toString() -> String {
         switch self {
@@ -18,6 +19,8 @@ enum ECNULoginStatus: Int {
             return "登录成功"
         case .登录失败:
             return "登录失败"
+        case .账号被锁定一分钟:
+            return "登录失败次数过多，账号被锁定一分钟"
         }
     }
 
@@ -27,6 +30,8 @@ enum ECNULoginStatus: Int {
             return .成功
         case .登录失败:
             return .登录失败
+        case .账号被锁定一分钟:
+            return .账号被锁定一分钟
         }
     }
 }
