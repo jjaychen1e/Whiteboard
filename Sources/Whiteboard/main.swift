@@ -11,6 +11,7 @@ var routes = Routes()
 
 routes.add(method: .get, uri: "/ecnu-service/login-verify") {
     request, response in
+    response.setHeader(.accessControlAllowOrigin, value: "*")
     response.setHeader(.contentEncoding, value: "utf-8")
     response.setHeader(.contentType, value: "application/json;charset=utf-8")
     
@@ -34,6 +35,7 @@ routes.add(method: .get, uri: "/ecnu-service/login-verify") {
 
 routes.add(method: .get, uri: "/ecnu-service/real-name") {
     request, response in
+    response.setHeader(.accessControlAllowOrigin, value: "*")
     response.setHeader(.contentEncoding, value: "utf-8")
     response.setHeader(.contentType, value: "application/json;charset=utf-8")
     
@@ -54,6 +56,7 @@ routes.add(method: .get, uri: "/ecnu-service/real-name") {
 
 routes.add(method: .get, uri: "/ecnu-service/course-list") {
     request, response in
+    response.setHeader(.accessControlAllowOrigin, value: "*")
     response.setHeader(.contentEncoding, value: "utf-8")
     response.setHeader(.contentType, value: "application/json;charset=utf-8")
     
@@ -88,6 +91,7 @@ routes.add(method: .get, uri: "/ecnu-service/course-list") {
 
 routes.add(method: .get, uri: "/ecnu-service/lesson-list") {
     request, response in
+    response.setHeader(.accessControlAllowOrigin, value: "*")
     response.setHeader(.contentEncoding, value: "utf-8")
     response.setHeader(.contentType, value: "application/json;charset=utf-8")
     
@@ -123,6 +127,7 @@ routes.add(method: .get, uri: "/ecnu-service/lesson-list") {
 
 routes.add(method: .get, uri: "/ecnu-service/course-calendar") {
     request, response in
+    response.setHeader(.accessControlAllowOrigin, value: "*")
     response.setHeader(.contentEncoding, value: "utf-8")
     response.setHeader(.contentType, value: "application/json;charset=utf-8")
     
@@ -162,6 +167,7 @@ routes.add(method: .get, uri: "/ecnu-service/course-calendar") {
 
 routes.add(method: .get, uri: "/ecnu-service/deadline-list") {
     request, response in
+    response.setHeader(.accessControlAllowOrigin, value: "*")
     response.setHeader(.contentEncoding, value: "utf-8")
     response.setHeader(.contentType, value: "application/json;charset=utf-8")
     
@@ -184,6 +190,7 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-list") {
 
 routes.add(method: .get, uri: "/ecnu-service/deadline-calendar") {
     request, response in
+    response.setHeader(.accessControlAllowOrigin, value: "*")
     if let username = request.param(name: "username"),
         let password = request.param(name: "password") {
         let result = ElearningService(username: username, password: password).generateDeadlineCalendarID()
@@ -207,6 +214,7 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar") {
 
 routes.add(method: .get, uri: "/ecnu-service/deadline-calendar-feed/{calendarID}") {
     request, response in
+    response.setHeader(.accessControlAllowOrigin, value: "*")
     response.setHeader(.contentEncoding, value: "utf-8")
     response.setHeader(.contentType, value: "application/json;charset=utf-8")
     
@@ -235,6 +243,7 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar-feed/{calendarID}
 
 routes.add(method: .get, uri: "/ecnu-service/semester-dates") {
     _, response in
+    response.setHeader(.accessControlAllowOrigin, value: "*")
     response.setHeader(.contentEncoding, value: "utf-8")
     response.setHeader(.contentType, value: "application/json;charset=utf-8")
     
