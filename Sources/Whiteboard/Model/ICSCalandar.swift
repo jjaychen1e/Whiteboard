@@ -61,9 +61,9 @@ class ICSCalendar {
     
     var prodID: String = "jjacychen.me"
     
-    private var candicateColor: [String] = ["#1D9BF6", "#FB0055", "#FD8208", "FF2D55", "FECF0F"]
+    private var candidateColor: [String] = ["#1D9BF6", "#FB0055", "#FD8208", "#FF2D55", "#FECF0F"]
     var appleCalendarColor: String {
-        candicateColor.randomElement() ?? "#1D9BF6"
+        candidateColor.randomElement() ?? "#1D9BF6"
     }
     
     fileprivate var timeZone = ICSTimeZone.Asia_Shanghai
