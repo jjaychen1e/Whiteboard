@@ -273,8 +273,8 @@ extension CourseService {
                     var lineMatch = (substring as NSString).substring(with: NSRange(location: 4, length: substring.count - 9))
                     
                     re = try! NSRegularExpression(pattern: "<br>", options: [])
-                    lineMatch = re.stringByReplacingMatches(in: lineMatch, options: [], range: NSRange(location: 0, length: lineMatch.count), withTemplate: ",")
-                    let splitLines = lineMatch.split(separator: ",")
+                    lineMatch = re.stringByReplacingMatches(in: lineMatch, options: [], range: NSRange(location: 0, length: lineMatch.count), withTemplate: "$")
+                    let splitLines = lineMatch.split(separator: "$")
                     
                     for line in splitLines {
                         let line = String(line)
@@ -333,7 +333,11 @@ extension CourseService {
                         
                         /// 获取上课地点
                         re = try! NSRegularExpression(pattern: ".*\\]", options: [])
-                        let location = re.stringByReplacingMatches(in: line, options: [], range: lineRange, withTemplate: "").trimmingCharacters(in: .whitespaces)
+                        var location = re.stringByReplacingMatches(in: line, options: [], range: lineRange, withTemplate: "").trimmingCharacters(in: .whitespaces)
+                        
+                        re = try! NSRegularExpression(pattern: ",", options: [])
+                        let locationRange = NSRange(location: 0, length: location.count)
+                        location = re.stringByReplacingMatches(in: location, options: [], range: locationRange, withTemplate: " ")
                         
                         let beginHour = 开始上课时间[lessonStartTimeOffset]
                         let endHour = 结束上课时间[lessonEndTimeOffset]
