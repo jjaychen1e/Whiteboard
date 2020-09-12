@@ -1,17 +1,16 @@
 //
-//  EcardLoginStatus.swift
+//  LibecnuLoginStatus.swift
 //  Whiteboard
 //
-//  Created by JJAYCHEN on 2020/6/15.
+//  Created by 陈俊杰 on 2020/9/12.
 //
 
 import Foundation
 
-enum EcardLoginStatus: Int {
+enum LibecnuLoginStatus: Int {
     case 登录成功 = 0
     case 用户名密码错误 = 1
-    case 验证码有误 = 2
-    case 未知登录错误 = 3
+    case 未知登录错误 = 2
 
     func toString() -> String {
         switch self {
@@ -19,8 +18,6 @@ enum EcardLoginStatus: Int {
             return "登录成功"
         case .用户名密码错误:
             return "用户名密码错误"
-        case .验证码有误:
-            return "验证码有误"
         case .未知登录错误:
             return "未知登录错误"
             
@@ -33,8 +30,6 @@ enum EcardLoginStatus: Int {
             return .成功
         case .用户名密码错误:
             return .用户名密码错误
-        case .验证码有误:
-            return .验证码有误
         case .未知登录错误:
             return .出错
         }

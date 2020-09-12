@@ -25,3 +25,6 @@ let ECARD_PORTAL_URL = "http://ecard.ecnu.edu.cn/weblogin"
 let ECARD_CAPTCHA_URL = "http://ecard.ecnu.edu.cn/util/rand"
 let ECARD_USER_INFO_URL = "http://ecard.ecnu.edu.cn/user/getCustomerData"
 let ECARD_BALANCE_QUERY_URL = "http://ecard.ecnu.edu.cn/user/getMainAndSubCustomers"
+
+// MARK: - Libecnu Service
+let LIBECNU_LOGIN_URL = "https://libecnu.lib.ecnu.edu.cn/patroninfo*chx~S0"

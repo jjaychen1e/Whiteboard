@@ -17,7 +17,7 @@ routes.add(method: .get, uri: "/ecnu-service/login-verify") {
     
     if let username = request.param(name: "username"),
         let password = request.param(name: "password") {
-        let service = EcardService(username: username, password: password)
+        let service = LibecnuService(username: username, password: password)
         switch service.loginResult {
         case .登录成功:
             response.setBody(string: ResultEntity.success(message: service.realName ?? "", data: true).toJSONString() ?? "")

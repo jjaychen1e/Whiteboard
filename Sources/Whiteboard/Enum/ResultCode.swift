@@ -16,9 +16,10 @@ enum ResultCode: Int, Encodable {
     // MARK: Login(ECNUService, EcardService)
     
     case 用户名密码错误 = 1002
-    case 登录失败 = 1004
+//    case 登录失败 = 1004
     case 数据库保存失败 = 1005
     case 账号被锁定一分钟 = 1006
+    case 验证码有误 = 1007
     
     // MARK: CourseService
     
@@ -47,12 +48,14 @@ enum ResultCode: Int, Encodable {
             return "参数匹配失败"
         case .用户名密码错误:
             return "用户名密码错误"
-        case .登录失败:
-            return "登录失败，请检查用户名密码，或请尝试重新请求"
+//        case .登录失败:
+//            return "登录失败，请检查用户名密码，或请尝试重新请求"
         case .数据库保存失败:
             return "数据库保存失败"
         case .账号被锁定一分钟:
             return "登录失败次数过多，账号被锁定一分钟"
+        case .验证码有误:
+            return "自动识别验证码有误，请重试"
         case .IDS获取失败:
             return "IDS获取失败，请尝试重新请求"
         case .课程列表为空:

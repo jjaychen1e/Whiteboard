@@ -68,7 +68,10 @@ class EcardService {
 
 extension EcardService {
     fileprivate func _login() -> EcardLoginStatus {
+        var status: EcardLoginStatus = .未知登录错误
+        
         defer{ print("\(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)) \(username) \(status.toString())") }
+        
         let semaphore = DispatchSemaphore(value: 0)
         
         var code = getCaptcha()
@@ -81,8 +84,6 @@ extension EcardService {
             "password": encrypedPassword,
             "code": code
         ]
-        
-        var status: EcardLoginStatus = .未知登录错误
         
         var request = URLRequest(url: URL(string: ECARD_PORTAL_URL)!)
         request = URLRequest(url: URL(string: ECARD_PORTAL_URL)!)

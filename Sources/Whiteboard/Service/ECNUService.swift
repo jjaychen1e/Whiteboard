@@ -74,9 +74,9 @@ class ECNUService {
     internal func login() -> ECNULoginStatus {
         let loginResult = _login()
         switch loginResult {
-        case .登录成功, .账号被锁定一分钟:
+        case .登录成功, .账号被锁定一分钟, .用户名密码错误:
             return loginResult
-        case .登录失败:
+        case .验证码有误, .未知错误:
             // Try again.
             return _login()
         }
@@ -142,7 +142,22 @@ extension ECNUService {
     }
     
     fileprivate func _login() -> ECNULoginStatus {
+        var status: ECNULoginStatus = .未知错误
+        
         defer{ print("\(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)) \(username) \(status.toString())") }
+        
+        if let password = self.password {
+            let libecnuService = LibecnuService(username: self.username, password: password)
+            switch libecnuService.loginResult {
+            case .登录成功:
+                break
+            case .用户名密码错误:
+                status = .用户名密码错误
+                return status
+            default:
+                return status
+            }
+        }
         let semaphore = DispatchSemaphore(value: 0)
         let semaphore1 = DispatchSemaphore(value: 0)
         let semaphore2 = DispatchSemaphore(value: 0)
@@ -174,7 +189,6 @@ extension ECNUService {
             "_eventId": "submit"
         ]
         
-        var status: ECNULoginStatus = .登录失败
         
         request = URLRequest(url: URL(string: ECNU_PORTAL_URL)!)
         request.encodeParameters(parameters: postData)
@@ -190,20 +204,20 @@ extension ECNUService {
                 
                 if let doc = try? HTML(html: content, encoding: .utf8) {
                     for _ in doc.xpath("//*[@id='errormsg']") {
-                        status = .登录失败
+                        status = .验证码有误
                         return
                     }
-                    status = ECNULoginStatus.登录成功
+                    status = .登录成功
                     self.isUserInfoSaveSuccess = MySQLConnector.updateUser(schoolID: self.username,
                                                                            rsa: self.rsa!,
                                                                            passwordLength: self.passwordLength!)
                     return
                 } else {
-                    status = ECNULoginStatus.登录失败
+                    status = .未知错误
                     return
                 }
             } else {
-                status = ECNULoginStatus.登录失败
+                status = .未知错误
                 return
             }
         }.resume()
