@@ -144,7 +144,9 @@ extension ECNUService {
     fileprivate func _login() -> ECNULoginStatus {
         var status: ECNULoginStatus = .未知错误
         
-        defer{ print("\(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)) \(username) \(status.toString())") }
+        defer{
+            LogManager.saveProcessLog(message: "\(username) \(status.toString())")
+        }
         
         if let password = self.password {
             let libecnuService = LibecnuService(username: self.username, password: password)

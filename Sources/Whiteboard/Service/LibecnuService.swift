@@ -62,8 +62,6 @@ extension LibecnuService {
     fileprivate func _login() -> LibecnuLoginStatus {
         var status: LibecnuLoginStatus = .未知登录错误
         
-//        defer{ print("\(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)) \(username) \(status.toString())") }
-        
         let semaphore = DispatchSemaphore(value: 0)
         
         let parameter = "?extpatid=\(username)&extpatpw=\(password)"

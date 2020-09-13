@@ -70,7 +70,9 @@ extension EcardService {
     fileprivate func _login() -> EcardLoginStatus {
         var status: EcardLoginStatus = .未知登录错误
         
-        defer{ print("\(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)) \(username) \(status.toString())") }
+        defer{
+            LogManager.saveProcessLog(message: "\(username) \(status.toString())")
+        }
         
         let semaphore = DispatchSemaphore(value: 0)
         

@@ -127,6 +127,7 @@ routes.add(method: .get, uri: "/ecnu-service/lesson-list") {
 
 routes.add(method: .get, uri: "/ecnu-service/course-calendar") {
     request, response in
+    LogManager.saveProcessLog(message: "Receive request `course-calendar` with username \(request.param(name: "username") ?? "nil")")
     response.setHeader(.accessControlAllowOrigin, value: "*")
     response.setHeader(.contentEncoding, value: "utf-8")
     response.setHeader(.contentType, value: "application/json;charset=utf-8")
@@ -224,7 +225,7 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar-feed/{calendarID}
             let calendarResult = ElearningService(username: queryResult.username, rsa: queryResult.rsa, passwordLength: queryResult.passwordLength)
                 .getDeadlineCalendar()
             if calendarResult.code == .成功, let data = calendarResult.data as? [String: String] {
-                print("\(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)) \(queryResult.username) updates deadline calendar successfully.")
+                LogManager.saveProcessLog(message: "\(queryResult.username) updates deadline calendar successfully.")
                 response.setHeader(.contentType, value: "text/calendar;charset=utf-8")
                 response.setHeader(.contentDisposition,
                                    value: "attachment; filename=\"\(data["fileName"]!)\"")
@@ -232,7 +233,7 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar-feed/{calendarID}
                 response.completed()
                 return
             } else {
-                print("\(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)) \(queryResult.username) updates deadline calendar failed.")
+                LogManager.saveProcessLog(message: "\(queryResult.username) updates deadline calendar failed.")
             }
         }
     }
