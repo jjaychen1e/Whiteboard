@@ -71,7 +71,7 @@ extension EcardService {
         var status: EcardLoginStatus = .未知登录错误
         
         defer{
-            LogManager.saveProcessLog(message: "\(username) \(status.toString())")
+            LogManager.saveProcessLog(message: "\(username) \(_realName ?? "") \(status.toString())")
         }
         
         let semaphore = DispatchSemaphore(value: 0)

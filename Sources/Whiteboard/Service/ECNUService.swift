@@ -33,8 +33,12 @@ class ECNUService {
     /// It will be initialized during login process.
     internal var passwordLength: Int?
     
+    private var _realName: String?
+    
     internal var realName: String? {
-        if loginResult == .登录成功 {
+        if _realName != nil {
+            return _realName
+        } else if loginResult == .登录成功 {
             return getRealname()
         }
         return nil
@@ -149,13 +153,14 @@ extension ECNUService {
         var status: ECNULoginStatus = .未知错误
         
         defer{
-            LogManager.saveProcessLog(message: "\(username) \(status.toString())")
+            LogManager.saveProcessLog(message: "\(username) \(_realName ?? "") \(status.toString())")
         }
         
         if let password = self.password {
             let libecnuService = LibecnuService(username: self.username, password: password)
             switch libecnuService.loginResult {
             case .登录成功:
+                _realName = libecnuService.realName
                 break
             case .用户名密码错误:
                 status = .用户名密码错误
