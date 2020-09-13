@@ -18,6 +18,10 @@ import Kanna
 import PerfectMySQL
 
 class ECNUService {
+    var LOGIN_PORTAL_URL: String {
+        ECNU_PORTAL_URL
+    }
+    
     internal let urlSession: URLSession
     
     internal let username: String
@@ -164,7 +168,7 @@ extension ECNUService {
         let semaphore1 = DispatchSemaphore(value: 0)
         let semaphore2 = DispatchSemaphore(value: 0)
         
-        var request = URLRequest(url: URL(string: ECNU_PORTAL_URL)!)
+        var request = URLRequest(url: URL(string: LOGIN_PORTAL_URL)!)
         urlSession.dataTask(with: request) {
             _, _, _ in
             do { semaphore1.signal() }
@@ -192,7 +196,7 @@ extension ECNUService {
         ]
         
         
-        request = URLRequest(url: URL(string: ECNU_PORTAL_URL)!)
+        request = URLRequest(url: URL(string: LOGIN_PORTAL_URL)!)
         request.encodeParameters(parameters: postData)
         
         urlSession.dataTask(with: request) {

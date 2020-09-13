@@ -8,7 +8,8 @@
 // MARK: - ECNU Service
 
 // 发现直接用大夏学堂登录可以同时登录数据库，反之不行。
-let ECNU_PORTAL_URL = "https://portal1.ecnu.edu.cn/cas/login?service=https://elearning.ecnu.edu.cn/webapps/cas-hdsfdx-BBLEARN/index.jsp"
+let ELEARNING_PORTAL_URL = "https://portal1.ecnu.edu.cn/cas/login?service=https://elearning.ecnu.edu.cn/webapps/cas-hdsfdx-BBLEARN/index.jsp"
+let ECNU_PORTAL_URL = "https://portal1.ecnu.edu.cn/cas/login?service=http://applicationnewjw.ecnu.edu.cn/eams/home.action"
 let ECNU_CAPTCHA_URL = "https://portal1.ecnu.edu.cn/cas/code"
 let ECNU_IDS_URL = "http://applicationnewjw.ecnu.edu.cn/eams/courseTableForStd!index.action"
 let ECNU_COURSE_TABLE_URL = "http://applicationnewjw.ecnu.edu.cn/eams/courseTableForStd!courseTable.action"

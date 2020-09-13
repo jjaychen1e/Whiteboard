@@ -10,6 +10,10 @@ import FoundationNetworking
 import Foundation
 
 class ElearningService: ECNUService {
+    override var LOGIN_PORTAL_URL: String {
+        ELEARNING_PORTAL_URL
+    }
+    
     func getDeadlineList(startTimestamp: String, endTimestamp: String) -> ResultEntity {
         guard loginResult == .登录成功 else {
             return ResultEntity.fail(code: loginResult.toResultCode())
