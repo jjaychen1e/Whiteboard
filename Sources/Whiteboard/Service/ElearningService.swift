@@ -70,32 +70,35 @@ extension ElearningService {
         
         let semaphore = DispatchSemaphore(value: 0)
         
-        let queryURL = "\(ECNU_ELEARNING_DEADLINE_URL)?start=\(startTimestamp)&end=\(endTimestamp)"
-        let request = URLRequest(url: URL(string: queryURL)!)
-        urlSession.dataTask(with: request) {
-            data, _, _ in
-            defer { semaphore.signal() }
+        if let queryURLString = "\(ECNU_ELEARNING_DEADLINE_URL)?start=\(startTimestamp)&end=\(endTimestamp)".addingPercentEncoding(withAllowedCharacters:
+        .urlQueryAllowed), let url = URL(string: queryURLString) {
+            let request = URLRequest(url: url)
             
-            if let data = data {
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+            urlSession.dataTask(with: request) {
+                data, _, _ in
+                defer { semaphore.signal() }
                 
-                let result = try? JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]] ?? []
-                for deadline in result ?? [] {
-                    let deadlineItem = Deadline(id: deadline["id"] as! String,
-                                                title: deadline["title"] as! String,
-                                                eventType: deadline["eventType"] as! String,
-                                                calendarName: deadline["calendarName"] as! String,
-                                                calendarID: deadline["calendarId"] as! String,
-                                                startDateTime: dateFormatter.date(from: deadline["start"] as! String)!,
-                                                endDateTime: dateFormatter.date(from: deadline["end"] as! String)!)
+                if let data = data {
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
                     
-                    deadlines.append(deadlineItem)
+                    let result = try? JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]] ?? []
+                    for deadline in result ?? [] {
+                        let deadlineItem = Deadline(id: deadline["id"] as! String,
+                                                    title: deadline["title"] as! String,
+                                                    eventType: deadline["eventType"] as! String,
+                                                    calendarName: deadline["calendarName"] as! String,
+                                                    calendarID: deadline["calendarId"] as! String,
+                                                    startDateTime: dateFormatter.date(from: deadline["start"] as! String)!,
+                                                    endDateTime: dateFormatter.date(from: deadline["end"] as! String)!)
+                        
+                        deadlines.append(deadlineItem)
+                    }
                 }
-            }
-        }.resume()
-        
-        semaphore.wait()
+            }.resume()
+            
+            semaphore.wait()
+        }
         
         return deadlines
     }

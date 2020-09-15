@@ -66,30 +66,31 @@ extension LibecnuService {
         
         let parameter = "?extpatid=\(username)&extpatpw=\(password)"
         
-        
-        let request = URLRequest(url: URL(string: LIBECNU_LOGIN_URL + parameter)!)
-        
-        urlSession.dataTask(with: request) {
-            data, _, _ in
-            defer { semaphore.signal() }
-            if let data = data, let content = String(data: data, encoding: .utf8) {
-                if let doc = try? HTML(html: content, encoding: .utf8) {
-                    let matchedErr = doc.xpath("/html/body/div[2]/div[2]/div[1]/form/table/tr[2]/td/text()")
-                    for i in 0..<matchedErr.count {
-                        if matchedErr[i].text!.contains(string: "无法通过您的校园卡确定您的身份") {
-                            status = .用户名密码错误
-                            return
+        if let urlStr = (LIBECNU_LOGIN_URL + parameter).addingPercentEncoding(withAllowedCharacters:
+            .urlQueryAllowed), let url = URL(string: urlStr) {
+            let request = URLRequest(url: url)
+            urlSession.dataTask(with: request) {
+                data, _, _ in
+                defer { semaphore.signal() }
+                if let data = data, let content = String(data: data, encoding: .utf8) {
+                    if let doc = try? HTML(html: content, encoding: .utf8) {
+                        let matchedErr = doc.xpath("/html/body/div[2]/div[2]/div[1]/form/table/tr[2]/td/text()")
+                        for i in 0..<matchedErr.count {
+                            if matchedErr[i].text!.contains(string: "无法通过您的校园卡确定您的身份") {
+                                status = .用户名密码错误
+                                return
+                            }
                         }
+                        
+                        status = .登录成功
+                        self._realName = doc.xpath("//*[@id=\"ECNU_pageNavColumn\"]/table/tr/td[1]/div/strong/text()").first?.text
+                        return
                     }
-                    
-                    status = .登录成功
-                    self._realName = doc.xpath("//*[@id=\"ECNU_pageNavColumn\"]/table/tr/td[1]/div/strong/text()").first?.text
-                    return
                 }
-            }
-        }.resume()
-        
-        semaphore.wait()
+            }.resume()
+            
+            semaphore.wait()
+        }
         
         return status
     }
