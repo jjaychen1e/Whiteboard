@@ -118,6 +118,10 @@ class CourseService: ECNUService {
         let calendarName = "\(year)-\(year + 1) 学年\(索引转学期["\(semesterIndex)"]!)课表"
         let icsCalendar = getCourseICSCalendar(lessons: lessons)
         
+        defer{
+            LogManager.saveCriticalLog(message: "\(username) \(realName ?? "") 获取课表成功")
+        }
+        
         return ResultEntity.success(data: [
             "fileName": calendarName + ".ics",
             "content": icsCalendar.toICSDescription()
