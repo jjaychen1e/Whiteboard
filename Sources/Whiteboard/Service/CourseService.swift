@@ -166,6 +166,7 @@ extension CourseService {
         var courseName: [String] = []
         var courseInstructor: [String] = []
         var courses: [Course] = []
+        var skipCourse: [Int] = []
         
         let postData = [
             "ignoreHead": "1",
@@ -182,10 +183,22 @@ extension CourseService {
             defer { semaphore.signal() }
             
             if let data = data, let content = String(data: data, encoding: .utf8) {
+                /// 获取课程类别
+                var re = try! NSRegularExpression(pattern: "</a></td>\\n<td>.*</td><td>", options: [])
+                for (index, match) in re.matches(in: content, options: [], range: NSRange(location: 0, length: content.count)).enumerated() {
+                    let re = try! NSRegularExpression(pattern: "&#30740;&#31350;&#29983;&#35838;&#31243;", options: [])
+                    let substring = (content as NSString).substring(with: match.range)
+                    if let _ = re.firstMatch(in: substring, options: [], range: NSRange(location: 0, length: substring.count)) {
+                        // 存在研究生课程，跳过
+                        skipCourse.append(index)
+                    }
+                }
+                
+                
                 /// 获取课程代号
-                var re = try! NSRegularExpression(pattern: "<td>[A-Z]{4}[0-9]{10}\\..{2}</td>", options: [])
-                for match in re.matches(in: content, options: [], range: NSRange(location: 0, length: content.count)) {
-                    let re = try! NSRegularExpression(pattern: "[A-Z]{4}[0-9]{10}\\..{2}", options: [])
+                re = try! NSRegularExpression(pattern: "<td>[A-Z]{1,}[0-9]{1,}\\..{2}</td>", options: [])
+                for (index, match) in re.matches(in: content, options: [], range: NSRange(location: 0, length: content.count)).enumerated() where !skipCourse.contains(index) {
+                    let re = try! NSRegularExpression(pattern: "[A-Z]{1,}[0-9]{1,}\\..{2}", options: [])
                     let substring = (content as NSString).substring(with: match.range)
                     if let match = re.firstMatch(in: substring, options: [], range: NSRange(location: 0, length: substring.count)) {
                         courseID.append((substring as NSString).substring(with: match.range))
@@ -194,7 +207,7 @@ extension CourseService {
                 
                 /// 获取课程名称
                 re = try! NSRegularExpression(pattern: "\">.*</a></td>", options: [])
-                for match in re.matches(in: content, options: [], range: NSRange(location: 0, length: content.count)) {
+                for (index, match) in re.matches(in: content, options: [], range: NSRange(location: 0, length: content.count)).enumerated() where !skipCourse.contains(index) {
                     var substring = (content as NSString).substring(with: match.range)
                     substring = (substring as NSString).substring(with: NSRange(location: 2, length: substring.count - 11))
                     courseName.append(substring)
@@ -202,7 +215,7 @@ extension CourseService {
                 
                 /// 获取任课教师
                 re = try! NSRegularExpression(pattern: "\\t\\t<td>.*</td>\\n\\t", options: [])
-                for match in re.matches(in: content, options: [], range: NSRange(location: 0, length: content.count)) {
+                for (index, match) in re.matches(in: content, options: [], range: NSRange(location: 0, length: content.count)).enumerated() where !skipCourse.contains(index) {
                     var substring = (content as NSString).substring(with: match.range)
                     
                     var re = try! NSRegularExpression(pattern: ">.*<", options: [])
