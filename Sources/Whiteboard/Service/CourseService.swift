@@ -70,45 +70,45 @@ class CourseService: ECNUService {
         super.init(username: username, password: password)
     }
     
-    func getCourseList() -> ResultEntity {
+    func getCourseList() -> Encodable {
         guard semesterBeginDateComp != nil else {
-            return ResultEntity.fail(code: .学期开学日期未设定)
+            return ResultEntity.fail(code: .学期开学日期未设定, data: "")
         }
         
         guard loginResult == .登录成功 else {
-            return ResultEntity.fail(code: loginResult.toResultCode())
+            return ResultEntity.fail(code: loginResult.toResultCode(), data: "")
         }
         
         guard courses.count > 0 else {
-            return ResultEntity.fail(code: .课程列表为空)
+            return ResultEntity.fail(code: .课程列表为空, data: "")
         }
         
         return ResultEntity.success(data: courses)
     }
     
-    func getLessonList() -> ResultEntity {
+    func getLessonList() -> Encodable {
         guard semesterBeginDateComp != nil else {
-            return ResultEntity.fail(code: .学期开学日期未设定)
+            return ResultEntity.fail(code: .学期开学日期未设定, data: "")
         }
         
         guard loginResult == .登录成功 else {
-            return ResultEntity.fail(code: loginResult.toResultCode())
+            return ResultEntity.fail(code: loginResult.toResultCode(), data: "")
         }
         
         guard lessons.count > 0 else {
-            return ResultEntity.fail(code: .课程安排为空)
+            return ResultEntity.fail(code: .课程安排为空, data: "")
         }
         
         return ResultEntity.success(data: lessons)
     }
     
-    func getCourseCalendar() -> ResultEntity {
+    func getCourseCalendar() -> ResultEntity<Dictionary<String, String>> {
         guard semesterBeginDateComp != nil else {
-            return ResultEntity.fail(code: .学期开学日期未设定)
+            return ResultEntity.fail(code: .学期开学日期未设定, data: [:])
         }
         
         guard loginResult == .登录成功 else {
-            return ResultEntity.fail(code: loginResult.toResultCode())
+            return ResultEntity.fail(code: loginResult.toResultCode(), data: [:])
         }
         
         defer {
@@ -116,7 +116,7 @@ class CourseService: ECNUService {
         }
         
         guard lessons.count > 0 else {
-            return ResultEntity.fail(code: .课程安排为空)
+            return ResultEntity.fail(code: .课程安排为空, data: [:])
         }
         
         let calendarName = "\(year)-\(year + 1) 学年\(索引转学期["\(semesterIndex)"]!)课表"

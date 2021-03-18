@@ -45,10 +45,10 @@ routes.add(method: .get, uri: "/ecnu-service/real-name") {
         if let realName =  service.realName {
             response.setBody(string: ResultEntity.success(data: realName).toJSONString() ?? "")
         } else {
-            response.setBody(string: ResultEntity.fail(code: service.loginResult.toResultCode()).toJSONString() ?? "")
+            response.setBody(string: ResultEntity.fail(code: service.loginResult.toResultCode(), data: "").toJSONString() ?? "")
         }
     } else {
-        response.setBody(string: ResultEntity.fail(code: .参数匹配失败).toJSONString() ?? "")
+        response.setBody(string: ResultEntity.fail(code: .参数匹配失败, data: "").toJSONString() ?? "")
     }
     
     response.completed()
@@ -71,7 +71,7 @@ routes.add(method: .get, uri: "/ecnu-service/course-list") {
         let currentYear = Int(dateFormatter.string(from: Date()))!
         
         guard (1...3).contains(semesterIndex), (2019...currentYear).contains(year) else {
-            response.setBody(string: ResultEntity.fail(code: .学年或学期索引不正确).toJSONString() ?? "")
+            response.setBody(string: ResultEntity.fail(code: .学年或学期索引不正确, data: "").toJSONString() ?? "")
             response.completed()
             return
         }
@@ -84,7 +84,7 @@ routes.add(method: .get, uri: "/ecnu-service/course-list") {
         return
     }
     
-    response.setBody(string: ResultEntity.fail(code: .参数匹配失败).toJSONString() ?? "")
+    response.setBody(string: ResultEntity.fail(code: .参数匹配失败, data: "").toJSONString() ?? "")
     response.completed()
     return
 }
@@ -106,7 +106,7 @@ routes.add(method: .get, uri: "/ecnu-service/lesson-list") {
         let currentYear = Int(dateFormatter.string(from: Date()))!
         
         guard (1...3).contains(semesterIndex), (2019...currentYear).contains(year) else {
-            response.setBody(string: ResultEntity.fail(code: .学年或学期索引不正确).toJSONString() ?? "")
+            response.setBody(string: ResultEntity.fail(code: .学年或学期索引不正确, data: "").toJSONString() ?? "")
             response.completed()
             return
         }
@@ -120,7 +120,7 @@ routes.add(method: .get, uri: "/ecnu-service/lesson-list") {
         return
     }
     
-    response.setBody(string: ResultEntity.fail(code: .参数匹配失败).toJSONString() ?? "")
+    response.setBody(string: ResultEntity.fail(code: .参数匹配失败, data: "").toJSONString() ?? "")
     response.completed()
     return
 }
@@ -143,13 +143,17 @@ routes.add(method: .get, uri: "/ecnu-service/course-calendar") {
         let currentYear = Int(dateFormatter.string(from: Date()))!
         
         guard (1...3).contains(semesterIndex), (2019...currentYear).contains(year) else {
-            response.setBody(string: ResultEntity.fail(code: .学年或学期索引不正确).toJSONString() ?? "")
+            response.setBody(string: ResultEntity.fail(code: .学年或学期索引不正确, data: "").toJSONString() ?? "")
             response.completed()
             return
         }
         
         let calendarResult = CourseService(username: username, password: password, year: year, semesterIndex: semesterIndex)
             .getCourseCalendar()
+        
+        if calendarResult is ResultEntity<Dictionary<String, String>> {
+            
+        }
         if calendarResult.code == .成功, let data = calendarResult.data as? [String: String] {
             response.setHeader(.contentType, value: "text/calendar;charset=utf-8")
             response.setHeader(.contentDisposition,
@@ -162,7 +166,7 @@ routes.add(method: .get, uri: "/ecnu-service/course-calendar") {
         response.completed()
     }
     
-    response.setBody(string: ResultEntity.fail(code: .出错).toJSONString() ?? "")
+    response.setBody(string: ResultEntity.fail(code: .出错, data: "").toJSONString() ?? "")
     response.completed()
 }
 
@@ -184,7 +188,7 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-list") {
         return
     }
     
-    response.setBody(string: ResultEntity.fail(code: .参数匹配失败).toJSONString() ?? "")
+    response.setBody(string: ResultEntity.fail(code: .参数匹配失败, data: "").toJSONString() ?? "")
     response.completed()
     return
 }
@@ -203,13 +207,13 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar") {
         }
         response.setHeader(.contentEncoding, value: "utf-8")
         response.setHeader(.contentType, value: "application/json;charset=utf-8")
-        response.setBody(string: ResultEntity.fail(code: result.code).toJSONString() ?? "")
+        response.setBody(string: ResultEntity.fail(code: result.code, data: "").toJSONString() ?? "")
         response.completed()
         return
     }
     response.setHeader(.contentEncoding, value: "utf-8")
     response.setHeader(.contentType, value: "application/json;charset=utf-8")
-    response.setBody(string: ResultEntity.fail(code: .参数匹配失败).toJSONString() ?? "")
+    response.setBody(string: ResultEntity.fail(code: .参数匹配失败, data: "").toJSONString() ?? "")
     response.completed()
 }
 
@@ -238,7 +242,7 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar-feed/{calendarID}
         }
     }
     
-    response.setBody(string: ResultEntity.fail(code: .出错).toJSONString() ?? "")
+    response.setBody(string: ResultEntity.fail(code: .出错, data: "").toJSONString() ?? "")
     response.completed()
 }
 

@@ -14,15 +14,15 @@ class ElearningService: ECNUService {
         ELEARNING_PORTAL_URL
     }
     
-    func getDeadlineList(startTimestamp: String, endTimestamp: String) -> ResultEntity {
+    func getDeadlineList(startTimestamp: String, endTimestamp: String) -> Encodable {
         guard loginResult == .登录成功 else {
-            return ResultEntity.fail(code: loginResult.toResultCode())
+            return ResultEntity.fail(code: loginResult.toResultCode(), data: "")
         }
         let deadlines = getDeadlines(startTimestamp: startTimestamp, endTimestamp: endTimestamp)
         if deadlines.count > 0 {
             return ResultEntity.success(data: deadlines)
         } else {
-            return ResultEntity.fail(code: .期限任务列表为空)
+            return ResultEntity.fail(code: .期限任务列表为空, data: "")
         }
     }
     
@@ -35,9 +35,9 @@ class ElearningService: ECNUService {
         return (true, .成功, username.encodeToCalendarID())
     }
     
-    func getDeadlineCalendar() -> ResultEntity {
+    func getDeadlineCalendar() -> ResultEntity<Dictionary<String, String>> {
         guard loginResult == .登录成功 else {
-            return ResultEntity.fail(code: loginResult.toResultCode())
+            return ResultEntity.fail(code: loginResult.toResultCode(), data: [:])
         }
         
         let calendar = Calendar.current
@@ -47,10 +47,6 @@ class ElearningService: ECNUService {
         let beginTimestamp = String(Int(calendar.date(from: beginDateComponents)!.timeIntervalSince1970)) + "000"
         let endTimestamp = String(Int(calendar.date(from: endDateComponents)!.timeIntervalSince1970)) + "000"
         let deadlines = getDeadlines(startTimestamp: beginTimestamp, endTimestamp: endTimestamp)
-        // Return an empty calendar if deadlines.count == 0
-//        guard deadlines.count > 0 else {
-//            return ResultEntity.fail(code: .期限任务列表为空)
-//        }
         
         let calendarName = "大夏学堂 Deadline 订阅"
         let icsCalendar = getDeadlineICSCalendar(deadlines: deadlines)
