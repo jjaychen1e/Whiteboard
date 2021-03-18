@@ -151,14 +151,11 @@ routes.add(method: .get, uri: "/ecnu-service/course-calendar") {
         let calendarResult = CourseService(username: username, password: password, year: year, semesterIndex: semesterIndex)
             .getCourseCalendar()
         
-        if calendarResult is ResultEntity<Dictionary<String, String>> {
-            
-        }
-        if calendarResult.code == .成功, let data = calendarResult.data as? [String: String] {
+        if calendarResult.code == .成功 {
             response.setHeader(.contentType, value: "text/calendar;charset=utf-8")
             response.setHeader(.contentDisposition,
-                               value: "attachment; filename=\"\(data["fileName"]!)\"")
-            response.setBody(string: data["content"]!)
+                               value: "attachment; filename=\"\(calendarResult.data["fileName"]!)\"")
+            response.setBody(string: calendarResult.data["content"]!)
             response.completed()
             return
         }
@@ -228,12 +225,12 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar-feed/{calendarID}
         if queryResult.isSuccess {
             let calendarResult = ElearningService(username: queryResult.username, rsa: queryResult.rsa, passwordLength: queryResult.passwordLength)
                 .getDeadlineCalendar()
-            if calendarResult.code == .成功, let data = calendarResult.data as? [String: String] {
+            if calendarResult.code == .成功 {
 //                LogManager.saveProcessLog(message: "\(queryResult.username) updates deadline calendar successfully.")
                 response.setHeader(.contentType, value: "text/calendar;charset=utf-8")
                 response.setHeader(.contentDisposition,
-                                   value: "attachment; filename=\"\(data["fileName"]!)\"")
-                response.setBody(string: data["content"]!)
+                                   value: "attachment; filename=\"\(calendarResult.data["fileName"]!)\"")
+                response.setBody(string: calendarResult.data["content"]!)
                 response.completed()
                 return
             } else {
