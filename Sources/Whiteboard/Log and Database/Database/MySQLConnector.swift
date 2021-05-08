@@ -45,7 +45,7 @@ class MySQLConnector {
     @discardableResult
     static func updateUuidUser(uuid: String, schoolID: String, rsa: String, passwordLength: Int) -> Bool {
         let sql = """
-        REPLACE INTO uuid_user(uuid, school_id, rsa, password_length) VALUES("\(uuid)", \(schoolID)", "\(rsa)", \(passwordLength));
+        REPLACE INTO uuid_user(uuid, school_id, rsa, password_length) VALUES("\(uuid)", "\(schoolID)", "\(rsa)", \(passwordLength));
         """
         
         return MySQLConnector.query(statement: sql).isSuccess
