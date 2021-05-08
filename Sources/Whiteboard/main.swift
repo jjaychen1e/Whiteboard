@@ -200,6 +200,7 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar") {
             response.status = .movedPermanently
             response.setHeader(.location, value: "webcal://\(DOMAIN_NAME)/ecnu-service/deadline-calendar-feed/\(calendarID)")
             response.completed()
+            LogManager.saveProcessLog(message: "\(username) 创建了日历订阅.")
             return
         }
         response.setHeader(.contentEncoding, value: "utf-8")
@@ -226,7 +227,7 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar-feed/{calendarID}
             let calendarResult = ElearningService(username: queryResult.username, rsa: queryResult.rsa, passwordLength: queryResult.passwordLength)
                 .getDeadlineCalendar()
             if calendarResult.code == .成功 {
-//                LogManager.saveProcessLog(message: "\(queryResult.username) updates deadline calendar successfully.")
+                LogManager.saveProcessLog(message: "\(queryResult.username) 成功更新了日历")
                 response.setHeader(.contentType, value: "text/calendar;charset=utf-8")
                 response.setHeader(.contentDisposition,
                                    value: "attachment; filename=\"\(calendarResult.data["fileName"]!)\"")
@@ -234,7 +235,7 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar-feed/{calendarID}
                 response.completed()
                 return
             } else {
-                LogManager.saveProcessLog(message: "\(queryResult.username) updates deadline calendar failed.")
+                LogManager.saveProcessLog(message: "\(queryResult.username) 更新日历失败")
             }
         }
     }
