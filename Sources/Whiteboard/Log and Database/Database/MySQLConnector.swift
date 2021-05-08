@@ -21,14 +21,14 @@ class MySQLConnector {
         defer { mysql.close() }
         
         guard mysql.connect(host: databaseHost, user: databaseUser, password: databasePassword, db: databaseSchema) else {
-//            LogManager.saveProcessLog(message: "数据库连接失败: \(mysql.errorMessage())", eventID: "-1")
+            LogManager.saveProcessLog(message: "数据库连接失败: \(mysql.errorMessage())")
             return (false, nil)
         }
         
         if mysql.query(statement: sql) {
             return (true, mysql.storeResults() ?? nil)
         } else {
-//            LogManager.saveProcessLog(message: "数据库 Query 失败: \(mysql.errorMessage())", eventID: "-1")
+            LogManager.saveProcessLog(message: "数据库 Query 失败: \(mysql.errorMessage())")
             return (false, nil)
         }
     }
