@@ -28,7 +28,7 @@ class MySQLConnector {
         if mysql.query(statement: sql) {
             return (true, mysql.storeResults() ?? nil)
         } else {
-            LogManager.saveProcessLog(message: "数据库 Query 失败: \(mysql.errorMessage())")
+            LogManager.saveProcessLog(message: "数据库 Query 失败: \(mysql.errorMessage()). \(sql)")
             return (false, nil)
         }
     }
