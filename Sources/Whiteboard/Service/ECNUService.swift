@@ -17,12 +17,17 @@ import JavaScriptCore
 import Kanna
 import PerfectMySQL
 
-class ECNUService {
+class ECNUService: NSObject, URLSessionTaskDelegate {
     var LOGIN_PORTAL_URL: String {
         ECNU_PORTAL_URL
     }
     
-    internal let urlSession: URLSession
+    internal lazy var urlSession: URLSession = {
+        let urlSessionConfiguration = URLSessionConfiguration.ephemeral
+        urlSessionConfiguration.httpCookieAcceptPolicy = .always
+        urlSessionConfiguration.httpAdditionalHeaders = ["Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8"]
+        return URLSession(configuration: urlSessionConfiguration, delegate: self, delegateQueue: nil)
+    }()
     
     internal let username: String
     internal let password: String?
@@ -59,13 +64,22 @@ class ECNUService {
     
     internal var isUserInfoSaveSuccess: Bool = false
     
+    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        if let url = request.url, url.absoluteString.contains(string: "%3A443") ||  url.absoluteString.contains(string: ":443"){
+            var request = request
+            request.url = URL(string: url.absoluteString.replacingOccurrences(of: "%3A443", with: "").replacingOccurrences(of: ":443", with: ""))
+            completionHandler(request)
+            return
+        }
+        
+        completionHandler(request)
+    }
+    
     init(username: String, password: String) {
         self.username = username
         self.password = password
         
-        let urlSessionConfiguration = URLSessionConfiguration.ephemeral
-        urlSessionConfiguration.httpAdditionalHeaders = ["Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8"]
-        self.urlSession = URLSession(configuration: urlSessionConfiguration)
+        super.init()
     }
     
     init(username: String, rsa: String, passwordLength: Int) {
@@ -73,10 +87,7 @@ class ECNUService {
         self.rsa = rsa
         self.passwordLength = passwordLength
         self.password = nil
-        
-        let urlSessionConfiguration = URLSessionConfiguration.ephemeral
-        urlSessionConfiguration.httpAdditionalHeaders = ["Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8"]
-        self.urlSession = URLSession(configuration: urlSessionConfiguration)
+        super.init()
     }
     
     internal func login() -> ECNULoginStatus {
