@@ -48,7 +48,6 @@ class MySQLConnector {
         REPLACE INTO uuid_user(uuid, school_id, rsa, password_length) VALUES("\(uuid)", "\(schoolID)", "\(rsa)", \(passwordLength));
         """
         
-        LogManager.saveProcessLog(message: sql)
         return MySQLConnector.query(statement: sql).isSuccess
     }
     
