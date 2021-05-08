@@ -10,9 +10,6 @@ import FoundationNetworking
 import Foundation
 
 class ElearningService: ECNUService {
-    override var LOGIN_PORTAL_URL: String {
-        ELEARNING_PORTAL_URL
-    }
     
     func getDeadlineList(startTimestamp: String, endTimestamp: String) -> Encodable {
         guard loginResult == .登录成功 else {
@@ -70,6 +67,17 @@ extension ElearningService {
         var deadlines: [Deadline] = []
         
         let semaphore = DispatchSemaphore(value: 0)
+        
+        if let url = URL(string:ELEARNING_PORTAL_URL) {
+            let request = URLRequest(url: url)
+            
+            urlSession.dataTask(with: request) {
+                _, _, _ in
+                semaphore.signal()
+            }.resume()
+            
+            semaphore.wait()
+        }
         
         if let queryURLString = "\(ECNU_ELEARNING_DEADLINE_URL)?start=\(startTimestamp)&end=\(endTimestamp)".addingPercentEncoding(withAllowedCharacters:
         .urlQueryAllowed), let url = URL(string: queryURLString) {
