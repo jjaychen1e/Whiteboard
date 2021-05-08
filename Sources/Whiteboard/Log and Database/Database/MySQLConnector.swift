@@ -55,7 +55,7 @@ class MySQLConnector {
         var result = (isSuccess: false, username: "", rsa: "", passwordLength: 0)
         
         let uuidSQL = """
-        select * FROM uuid_user WHERE uuid = \(uuid);
+        select * FROM uuid_user WHERE uuid = "\(uuid)";
         """
         if let uuidResults = MySQLConnector.query(statement: uuidSQL).results {
             uuidResults.forEachRow { row in
