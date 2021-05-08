@@ -112,7 +112,7 @@ class CourseService: ECNUService {
         }
         
         defer {
-            LogManager.saveCriticalLog(message: "\(username) \(realName ?? "") 获取课表成功")
+            LogManager.saveCriticalLog(message: "\(username) \(realName ?? "") 获取 \(year) 学年第 \(semesterIndex) 学期课表成功")
         }
         
         guard lessons.count > 0 else {
