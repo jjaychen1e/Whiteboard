@@ -28,13 +28,16 @@ class ElearningService: ECNUService {
     
     /// Generate corresponding deadline calendarID if success, otherwise return nil
     func generateDeadlineCalendarID() -> (isSuccess: Bool, code: ResultCode, calendarID: String?) {
-        guard loginResult == .登录成功, isUserInfoSaveSuccess == true else {
-            return (false, loginResult == .登录成功 ? .数据库保存失败 : loginResult.toResultCode(), nil)
+        guard loginResult == .登录成功 else {
+            return (false, loginResult.toResultCode(), nil)
         }
         
         let uuid = UUID().uuidString
-        MySQLConnector.updateUuidUser(uuid: uuid, schoolID: username, rsa: rsa!, passwordLength: passwordLength!)
-        return (true, .成功, uuid)
+        if MySQLConnector.updateUuidUser(uuid: uuid, schoolID: username, rsa: rsa!, passwordLength: passwordLength!) {
+            return (true, .成功, uuid)
+        } else {
+            return (true, .数据库保存失败, nil)
+        }
     }
     
     func getDeadlineCalendar() -> ResultEntity<Dictionary<String, String>> {
