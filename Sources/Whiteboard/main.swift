@@ -221,7 +221,7 @@ routes.add(method: .get, uri: "/ecnu-service/deadline-calendar-feed/{calendarID}
     response.setHeader(.contentType, value: "application/json;charset=utf-8")
     
     if let calendarID = request.urlVariables["calendarID"] {
-        let queryResult = MySQLConnector.queryUserInfo(calendarID: calendarID)
+        let queryResult = MySQLConnector.queryUserInfo(uuid: calendarID)
         if queryResult.isSuccess {
             let calendarResult = ElearningService(username: queryResult.username, rsa: queryResult.rsa, passwordLength: queryResult.passwordLength)
                 .getDeadlineCalendar()

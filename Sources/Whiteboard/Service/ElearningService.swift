@@ -32,7 +32,9 @@ class ElearningService: ECNUService {
             return (false, loginResult == .登录成功 ? .数据库保存失败 : loginResult.toResultCode(), nil)
         }
         
-        return (true, .成功, username.encodeToCalendarID())
+        let uuid = UUID().uuidString
+        MySQLConnector.updateUuidUser(uuid: uuid, schoolID: username, rsa: rsa!, passwordLength: passwordLength!)
+        return (true, .成功, uuid)
     }
     
     func getDeadlineCalendar() -> ResultEntity<Dictionary<String, String>> {
