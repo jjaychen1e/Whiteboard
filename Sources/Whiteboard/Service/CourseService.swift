@@ -356,18 +356,30 @@ extension CourseService {
                         let locationRange = NSRange(location: 0, length: location.count)
                         location = re.stringByReplacingMatches(in: location, options: [], range: locationRange, withTemplate: " ")
                         
-                        let beginHour = 开始上课时间[lessonStartTimeOffset]
-                        let endHour = 结束上课时间[lessonEndTimeOffset]
-                        let beginMin = (Int(lessonStartTimeOffset)! % 2 == 0) ? 55 : 00
-                        let endMin = (Int(lessonEndTimeOffset)! % 2 == 0) ? 40 : 45
                         var classTimeBeginDateComp = self.semesterBeginDateComp!
                         var classTimeEndDateComp = self.semesterBeginDateComp!
-                        classTimeBeginDateComp.day! += dayOffset!
-                        classTimeEndDateComp.day! += dayOffset!
-                        classTimeBeginDateComp.hour = beginHour
-                        classTimeEndDateComp.hour = endHour
-                        classTimeBeginDateComp.minute = beginMin
-                        classTimeEndDateComp.minute = endMin
+                        
+                        if Int(self.semesterID) ?? 0 >= 993 {
+                            let beginTime = 新开始上课时间[lessonStartTimeOffset]
+                            let endTime = 新结束上课时间[lessonEndTimeOffset]
+                            classTimeBeginDateComp.day! += dayOffset!
+                            classTimeEndDateComp.day! += dayOffset!
+                            classTimeBeginDateComp.hour = beginTime!.0
+                            classTimeEndDateComp.hour = endTime!.0
+                            classTimeBeginDateComp.minute = beginTime!.1
+                            classTimeEndDateComp.minute = endTime!.1
+                        } else {
+                            let beginHour = 开始上课时间[lessonStartTimeOffset]
+                            let endHour = 结束上课时间[lessonEndTimeOffset]
+                            let beginMin = (Int(lessonStartTimeOffset)! % 2 == 0) ? 55 : 00
+                            let endMin = (Int(lessonEndTimeOffset)! % 2 == 0) ? 40 : 45
+                            classTimeBeginDateComp.day! += dayOffset!
+                            classTimeEndDateComp.day! += dayOffset!
+                            classTimeBeginDateComp.hour = beginHour
+                            classTimeEndDateComp.hour = endHour
+                            classTimeBeginDateComp.minute = beginMin
+                            classTimeEndDateComp.minute = endMin
+                        }
                         
                         for week in weekOffset {
                             var classTimeBeginDateComp = classTimeBeginDateComp
