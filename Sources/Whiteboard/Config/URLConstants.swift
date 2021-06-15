@@ -13,7 +13,7 @@ let ECNU_PORTAL_URL = "http://portal1.ecnu.edu.cn/cas/login?service=http://appli
 let ECNU_CAPTCHA_URL = "http://portal1.ecnu.edu.cn/cas/code"
 let ECNU_IDS_URL = "http://applicationnewjw.ecnu.edu.cn/eams/courseTableForStd!index.action"
 let ECNU_COURSE_TABLE_URL = "https://applicationnewjw.ecnu.edu.cn/eams/courseTableForStd!courseTable.action"
-let ECNU_COURSE_QUERY_URL = "http://applicationnewjw.ecnu.edu.cn/eams/publicSearch!search.action"
+let ECNU_COURSE_QUERY_URL = "https://applicationnewjw.ecnu.edu.cn/eams/publicSearch!search.action"
 let ECNU_PLAN_PANEL_URL = "http://applicationnewjw.ecnu.edu.cn/eams/myPlanCompl.action"
 //let ECNU_ELEARNING_DEADLINE_URL = "https://elearning.ecnu.edu.cn/webapps/calendar/calendarData/selectedCalendarEvents"
 // selectedCalendarEvents 会受用户在 elearning 上的选择影响
