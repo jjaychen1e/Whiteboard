@@ -76,7 +76,7 @@ extension LibecnuService {
                     if let doc = try? HTML(html: content, encoding: .utf8) {
                         let matchedErr = doc.xpath("/html/body/div[2]/div[2]/div[1]/form/table/tr[2]/td/text()")
                         for i in 0..<matchedErr.count {
-                            if matchedErr[i].text!.contains(string: "无法通过您的校园卡确定您的身份") {
+                            if matchedErr[i].text!.contains("无法通过您的校园卡确定您的身份") {
                                 status = .用户名密码错误
                                 return
                             }

@@ -37,21 +37,35 @@ var CAPTCHA_PATH: String {
 }
 
 func initializePath() {
-    if FileManager.default.fileExists(atPath: "/usr/bin/tesseract") {
-        TESSERACT_PATH = "/usr/bin/tesseract"
-    } else if FileManager.default.fileExists(atPath: "/usr/local/bin/tesseract") {
-        TESSERACT_PATH = "/usr/local/bin/tesseract"
-    } else {
-        fatalError("tesseract cannot be found in both '/usr/bin/tesseract' or '/usr/local/bin/tesseract'")
+    try! FileManager.default.createDirectory(at: URL(string: "file://" + TEMP_PREXFIX)!, withIntermediateDirectories: true)
+
+#if os(Linux)
+    do {
+        NODE_PATH = try CommandLineInterface.runCommand("which", arguments: ["node"])
+    } catch {
+        fatalError("NodeJS cannot be found.")
+    }
+#endif
+
+    do {
+        CONVERT_PATH = try CommandLineInterface.runCommand("which", arguments: ["convert"])
+    } catch {
+        fatalError("ImageMagick cannot be found.")
+    }
+
+    do {
+        TESSERACT_PATH = try CommandLineInterface.runCommand("which", arguments: ["tesseract"])
+    } catch {
+        fatalError("tesseract cannot be found.")
     }
 
     // Generate tesseract config file.
-    #if os(Linux)
+#if os(Linux)
     let tessconfigsDirectoryPath = String(runCommand(launchPath: "/usr/bin/find", arguments: ["/usr/share/", "-name", "tessconfigs"]).split(separator: "\n").first!)
-    #else
-    let tesseractRealPath = runCommand(launchPath: "/usr/bin/readlink", arguments: [TESSERACT_PATH])
+#else
+    let tesseractRealPath = try! CommandLineInterface.runCommand("/usr/bin/readlink", arguments: [TESSERACT_PATH])
     let tessconfigsDirectoryPath = TESSERACT_PATH.truncation() + "/" + tesseractRealPath.truncation(2) + "/share/tessdata/tessconfigs"
-    #endif
+#endif
 
     let captchaConfigFilePath = tessconfigsDirectoryPath + "/captcha"
     
@@ -59,22 +73,6 @@ func initializePath() {
         try! "tessedit_char_whitelist 0123456789\n".data(using: .utf8)?.write(to: URL(fileURLWithPath: captchaConfigFilePath))
     } else {
         fatalError("Cannot find tessconfigs directory: \(tessconfigsDirectoryPath)")
-    }
-    
-    if FileManager.default.fileExists(atPath: "/usr/bin/node") {
-        NODE_PATH = "/usr/bin/node"
-    } else if FileManager.default.fileExists(atPath: "/usr/local/bin/node") {
-        NODE_PATH = "/usr/local/bin/node"
-    } else {
-        fatalError("NodeJS cannot be found in both '/usr/bin/node' or '/usr/local/bin/node'")
-    }
-
-    if FileManager.default.fileExists(atPath: "/usr/bin/convert") {
-        CONVERT_PATH = "/usr/bin/convert"
-    } else if FileManager.default.fileExists(atPath: "/usr/local/bin/convert") {
-        CONVERT_PATH = "/usr/local/bin/convert"
-    } else {
-        fatalError("ImageMagick cannot be found in both '/usr/bin/convert' or '/usr/local/bin/convert'")
     }
 }
 

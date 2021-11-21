@@ -337,7 +337,7 @@ extension CourseService {
                             let weekFirst = (substring as NSString).substring(with: match[0].range)
                             let weekLast = (substring as NSString).substring(with: match[1].range)
                             
-                            if substring.contains(string: "单") || substring.contains(string: "双") {
+                            if substring.contains("单") || substring.contains("双") {
                                 for i in stride(from: Int(weekFirst)!, through: Int(weekLast)!, by: 2) {
                                     weekOffset.append(String(i))
                                 }

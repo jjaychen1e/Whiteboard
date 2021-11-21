@@ -15,7 +15,7 @@ import JavaScriptCore
 #endif
 
 import Kanna
-import PerfectMySQL
+import Vapor
 
 class ECNUService: NSObject, URLSessionTaskDelegate {
     var LOGIN_PORTAL_URL: String {
@@ -65,7 +65,7 @@ class ECNUService: NSObject, URLSessionTaskDelegate {
     internal var isUserInfoSaveSuccess: Bool = false
     
     func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
-        if let url = request.url, url.absoluteString.contains(string: "%3A443") ||  url.absoluteString.contains(string: ":443"){
+        if let url = request.url, url.absoluteString.contains("%3A443") ||  url.absoluteString.contains(":443"){
             var request = request
             request.url = URL(string: url.absoluteString.replacingOccurrences(of: "%3A443", with: "").replacingOccurrences(of: ":443", with: ""))
             completionHandler(request)
@@ -124,7 +124,7 @@ extension ECNUService {
                 if let data = data {
                     try data.write(to: captchaURL)
 
-                    code = String(runCommand(launchPath: TESSERACT_PATH, arguments: [path, "stdout", "--dpi", "259", "captcha"]).prefix(4))
+                    code = String(try! CommandLineInterface.runCommand(TESSERACT_PATH, arguments: [path, "stdout", "--dpi", "259", "captcha"]).prefix(4))
                     
                     /// 删除已经识别的验证码
                     let fileManager = FileManager.default
@@ -144,7 +144,7 @@ extension ECNUService {
     fileprivate func getRSA() -> String {
         #if !os(Linux)
         let context: JSContext = JSContext()
-        context.evaluateScript(desCode)
+        context.evaluateScript(JavaScriptInterface.desCode)
         
         let squareFunc = context.objectForKeyedSubscript("strEnc")
         
@@ -219,7 +219,7 @@ extension ECNUService {
             data, _, _ in
             defer { semaphore.signal() }
             if let data = data, let content = String(data: data, encoding: .utf8) {
-                guard !content.contains(string: "访问被拒绝") else {
+                guard !content.contains("访问被拒绝") else {
                     status = .账号被锁定一分钟
                     return
                 }

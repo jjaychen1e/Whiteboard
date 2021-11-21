@@ -1,42 +1,25 @@
 //
-//  HelperFunction.swift
-//  Whiteboard
+//  JavaScriptInterface.swift
+//  
 //
-//  Created by JJAYCHEN on 2020/5/28.
+//  Created by 陈俊杰 on 2021/11/21.
 //
 
 import Foundation
 
-// MARK: Helper functions
-func generateHelperJS() {
-    #if os(Linux)
-    do {
-        try desCode.write(to: URL(fileURLWithPath: TEMP_PREXFIX + "/getRSA.js"), atomically: true, encoding: String.Encoding.utf8)
-    } catch {
-        fatalError("\(error)")
+class JavaScriptInterface {
+    static func generateHelperJS() {
+#if os(Linux)
+        do {
+            try desCode.write(to: URL(fileURLWithPath: TEMP_PREXFIX + "/getRSA.js"), atomically: true, encoding: String.Encoding.utf8)
+        } catch {
+            fatalError("\(error)")
+        }
+
+#endif
     }
-    
-    #endif
-}
 
-func runCommand(launchPath: String, arguments: [String]) -> String {
-    let pipe = Pipe()
-    let file = pipe.fileHandleForReading
-    
-    let task = Process()
-    
-    task.launchPath = launchPath
-    task.arguments = arguments
-    task.standardOutput = pipe
-    task.launch()
-    
-    let data = file.readDataToEndOfFile()
-    return String(data: data, encoding: String.Encoding.utf8)!
-}
-
-// MARK: JavaScript Code
-
-let desCode = """
+    static let desCode = """
 var data = process.argv[2];
 console.log(strEnc(data, "1", "2", "3"));
 
@@ -901,3 +884,5 @@ function generateKeys(keyByte){
  return keys;
 }
 """
+
+}

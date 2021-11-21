@@ -138,8 +138,8 @@ extension EcardService {
                 try data!.write(to: captchaURL)
                 
                 // Preprocess
-                _ = runCommand(launchPath: CONVERT_PATH, arguments: [path, "-compress", "none", "-alpha", "off", "-depth", "8", "-threshold", "50%", path])
-                code = String(runCommand(launchPath: TESSERACT_PATH, arguments: [path, "stdout", "--dpi", "159", "--psm", "7", "captcha"])
+                try! CommandLineInterface.runCommand(CONVERT_PATH, arguments: [path, "-compress", "none", "-alpha", "off", "-depth", "8", "-threshold", "50%", path])
+                code = String(try! CommandLineInterface.runCommand(TESSERACT_PATH, arguments: [path, "stdout", "--dpi", "159", "--psm", "7", "captcha"])
                     .filter { (char) -> Bool in
                         char.isNumber
                 }.prefix(4))
