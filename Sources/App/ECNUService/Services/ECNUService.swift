@@ -230,9 +230,6 @@ extension ECNUService {
                         return
                     }
                     status = .登录成功
-                    self.isUserInfoSaveSuccess = MySQLConnector.updateUser(schoolID: self.username,
-                                                                           rsa: self.rsa!,
-                                                                           passwordLength: self.passwordLength!)
                     return
                 } else {
                     status = .未知错误

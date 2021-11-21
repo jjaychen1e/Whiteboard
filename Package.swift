@@ -11,12 +11,11 @@ let package = Package(
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
         .package(name: "Kanna", url: "https://github.com/tid-kijyun/Kanna.git", from: "5.2.2"),
         .package(name: "ShellOut", url: "https://github.com/JohnSundell/ShellOut", from: "2.3.0"),
-        .package(name: "PerfectMySQL", url: "https://github.com/PerfectlySoft/Perfect-MySQL.git", from: "3.0.0"),
     ],
     targets: [
         .target(
             name: "App",
-            dependencies: [.product(name: "Vapor", package: "vapor"), "Kanna", "ShellOut", "PerfectMySQL"],
+            dependencies: [.product(name: "Vapor", package: "vapor"), "Kanna", "ShellOut"],
             swiftSettings: [
                 // Enable better optimizations when building in Release configuration. Despite the use of
                 // the `.unsafeFlags` construct required by SwiftPM, this flag is recommended for Release

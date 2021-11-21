@@ -24,14 +24,14 @@ let resultLogFilePath = TEMP_PREXFIX + "/ecnu-service-result.log"
 #endif
 
 /// Random file name with time and random Int value.
-/// Example: 2020-03-03-01-17-42-5-captacha.png
+/// Example: 2020-03-03-01-17-42-5-captcha.png
 var CAPTCHA_PATH: String {
     let prefix = TEMP_PREXFIX
 
-    let dateformatter = DateFormatter()
-    dateformatter.dateFormat = "YYYY-MM-dd-HH-mm-ss-SSS"
-    let randomSuffic = String(Int.random(in: 0...1000))
-    let suffix = dateformatter.string(from: Date()) + "-" + randomSuffic + "-captcha.jpg"
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "YYYY-MM-dd-HH-mm-ss-SSS"
+    let randomSuffix = String(Int.random(in: 0...1000))
+    let suffix = dateFormatter.string(from: Date()) + "-" + randomSuffix + "-captcha.jpg"
 
     return prefix + "/" + suffix
 }

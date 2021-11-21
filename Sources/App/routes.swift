@@ -34,6 +34,6 @@ func routes(_ app: Application) throws {
             return response
         }
 
-        return Response(body: .init(string: calendarResult.toJSONString() ?? calendarResult.message))
+        return Response(body: .init(data: (calendarResult.toJSONString() ?? calendarResult.message).data(using: .utf8)!))
     }
 }
