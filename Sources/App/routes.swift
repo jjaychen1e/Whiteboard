@@ -34,6 +34,11 @@ func routes(_ app: Application) throws {
             return response
         }
 
-        return Response(body: .init(data: (calendarResult.toJSONString() ?? calendarResult.message).data(using: .utf8)!))
+        var header = HTTPHeaders()
+        header.contentType = .json
+        header.add(name: "Content-Encoding",
+                   value: "utf-8")
+
+        return Response(headers: header, body: .init(data: (calendarResult.toJSONString() ?? calendarResult.message).data(using: .utf8)!))
     }
 }

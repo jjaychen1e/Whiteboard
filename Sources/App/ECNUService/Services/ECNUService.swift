@@ -19,7 +19,7 @@ import Vapor
 
 class ECNUService: NSObject, URLSessionTaskDelegate {
     var LOGIN_PORTAL_URL: String {
-        ECNU_PORTAL_URL
+        ELEARNING_PORTAL_URL
     }
     
     internal lazy var urlSession: URLSession = {
