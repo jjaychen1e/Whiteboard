@@ -153,7 +153,7 @@ extension ECNUService {
         return rsa
         
         #else
-        let rsa = try! CommandLineInterface.runCommand(launchPath: NODE_PATH,
+        let rsa = try! CommandLineInterface.runCommand(NODE_PATH,
                              arguments: [JS_FILE_PATH, username + password!])
         
         return rsa

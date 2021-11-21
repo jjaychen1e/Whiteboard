@@ -61,7 +61,7 @@ func initializePath() {
 
     // Generate tesseract config file.
 #if os(Linux)
-    let tessconfigsDirectoryPath = String(CommandLineInterface.runCommand(launchPath: "/usr/bin/find", arguments: ["/usr/share/", "-name", "tessconfigs"]).split(separator: "\n").first!)
+    let tessconfigsDirectoryPath = String(CommandLineInterface.runCommand("/usr/bin/find", arguments: ["/usr/share/", "-name", "tessconfigs"]).split(separator: "\n").first!)
 #else
     let tesseractRealPath = try! CommandLineInterface.runCommand("/usr/bin/readlink", arguments: [TESSERACT_PATH])
     let tessconfigsDirectoryPath = TESSERACT_PATH.truncation() + "/" + tesseractRealPath.truncation(2) + "/share/tessdata/tessconfigs"
